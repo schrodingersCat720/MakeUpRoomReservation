@@ -79,12 +79,103 @@ nav .menu-icon:hover {
 }
 
 .back2Dash {
-	color: #000000;
+	color: white;
 }
 
 .back2Dash:hover {
-	color: #003893;
+	color: black;
 }
+
+/* ====== SLIDE MENU ====== */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 98;
+}
+
+    .overlay.active {
+        opacity: 1;
+        pointer-events: all;
+    }
+
+.side-menu {
+    position: fixed;
+    top: 0;
+    right: -300px;
+    width: 280px;
+    height: 100%;
+    background: #e9e9e9;
+    box-shadow: -3px 0 8px rgba(0,0,0,0.1);
+    transition: right 0.3s ease;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 40px;
+}
+
+    .side-menu.active {
+        right: 0;
+    }
+
+    .side-menu .back-btn {
+        align-self: flex-start;
+        margin-left: 20px;
+        font-size: 22px;
+        cursor: pointer;
+    }
+
+    .side-menu h3 {
+        margin-top: 10px;
+        font-size: 16px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+    }
+
+    .side-menu button {
+        width: 180px;
+        margin-top: 25px;
+        padding: 10px;
+        border: none;
+        border-radius: 4px;
+		background: #e9e9e9;
+        font-weight: 600;
+        cursor: pointer;
+        text-align: right; 
+        color: black;
+        transition: background 0.2s ease;
+    }
+
+        .side-menu button:hover {
+            background: #052f85;
+			color: #ffffff;
+		
+        }
+
+    .side-menu .menu-item {
+        background: none;
+        color: #111;
+        border: none;
+        font-size: 14px;
+        font-weight: 600;
+        margin-top: 20px;
+        cursor: pointer;
+        text-align: right; 
+    }
+
+    .side-menu hr {
+        width: 80%;
+        border: 0;
+        border-top: 1px solid #aaa;
+        margin: 20px 0;
+    }
 
 /* =========================================================
    MAIN CONTENT
