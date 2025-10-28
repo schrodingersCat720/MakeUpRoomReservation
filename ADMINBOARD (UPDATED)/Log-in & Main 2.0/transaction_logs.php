@@ -64,9 +64,6 @@ $logs = $conn->query("
       <p>Make-Up Class Room Reservation</p>
     </div>
   </div>
-  <div>
-		<a href="main.php" class="back2Dash">Back to Dashboard</a>
-	</div>
   <div class="menu-icon" id="menuToggle">☰</div>
 </nav>
 
@@ -116,6 +113,9 @@ $logs = $conn->query("
   <div class="back-btn" id="backBtn">◀</div>
   <h3>MENU</h3>
   <button class="Transactionbtn">Transaction Logs</button>
+  <div>
+	  <a href="main.php" class="back2Dash">Back to Dashboard</a>
+  </div>
   <hr>
   <button class="menu-item">Log-out Admin</button>
 </div>
