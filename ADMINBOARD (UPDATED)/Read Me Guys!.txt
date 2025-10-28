@@ -1,0 +1,34 @@
+Config Adjustments
+Database credentials: check connect.php. If your groupmate’s MySQL root password differs (e.g., blank vs. root), update it.
+
+Paths: if you used absolute paths anywhere (like C:/xampp/htdocs/...), replace them with relative paths.
+
+Permissions: make sure the reservation_slips folder is writable so PDFs can be saved.
+
+Test Before Presentation
+Start Apache + MySQL.
+Visit http://localhost/reservation_system/main.php.
+Try a test reservation → confirm:
+Room exclusion works.
+PDF slip generates.
+Transaction log records.
+
+PHP extensions enabled in XAMPP’s php.ini:
+mbstring
+gd
+openssl
+dom (These are usually bundled with XAMPP, but double‑check they’re not commented out with ; in php.ini.)
+
+Easiest path for tomorrow
+Since you want zero surprises during the presentation:
+
+Copy your entire project folder, including the vendor directory, to your groupmate’s htdocs. → This way, you don’t need to run Composer again.
+
+Check php.ini in XAMPP and make sure the extensions above are enabled.
+Test PDF generation by making a dummy reservation — if the slip downloads, you’re good.
+
+🧰 Backup plan
+If for some reason the vendor folder didn’t copy properly:
+Install Composer on your groupmate’s laptop.
+Run composer require dompdf/dompdf inside your project folder.
+Restart Apache, and you’re set.

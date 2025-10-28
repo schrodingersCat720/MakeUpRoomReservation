@@ -1,0 +1,250 @@
+@font-face {
+	font-family: 'FuturaCyrillicBold';
+	src: url('fonts/FuturaCyrillicBold.ttf') format('truetype');
+	font-weight: bold;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'Garet-Book';
+	src: url('fonts/Garet-Book.otf') format('truetype');
+	font-weight: bold;
+	font-style: normal;
+}
+
+body {
+	font-family: 'Garet-Book';
+	margin: 0;
+	background-color: #f4f4f4;
+}
+
+.header {
+	background-color: #003893;
+	color: white;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	width: 100%;
+}
+
+.header img {
+	height: 60px;
+	margin-right: 15px;
+	margin-left:20px;
+}
+
+.header-left {
+	display: flex;
+	flex-direction: column;
+	margin-left: 10px;
+}
+
+.header-left h1 {
+	font-family: 'FuturaCyrillicBold';
+	font-size: 18px;
+	margin: 0;
+}
+
+.header-left span {
+  font-size: 12px;
+}
+
+.leftSide {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+}
+
+.header-right {
+	margin-right: 50px;
+}
+
+.header-right h2 {
+	font-size:32px;
+      cursor:pointer;
+      user-select:none;
+      transition:transform 0.2s ease;
+}
+
+.header-right h2:hover {
+	transform:scale(1.1);
+}
+
+
+.container {
+  padding: 50px;
+  margin: auto;
+  max-width: 1000px;
+}
+
+.reservationFont{
+	font-family: 'FuturaCyrillicBold';
+}
+
+.reservationTitleGrid {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	width: 100%;
+}
+
+.backToDash {
+	color: #000000;
+}
+
+.backToDash:hover {
+	color: #003893;
+}
+
+.form-box {
+  background-color: #d9d9d9;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 0 5px #999;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.form-box h2 {
+  margin-bottom: 20px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+  margin-top: 7px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+input {
+  padding: 15px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+}
+
+.submit-btn {
+  margin-top: 20px;
+  text-align: right;
+  padding-bottom: 10px;
+}
+
+button {
+  background-color: #003893;
+  color: white;
+  border: none;
+  padding: 14px 40px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+button:disabled {
+  background-color: #999;
+  cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ====== SLIDE MENU ====== */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 9;
+}
+
+    .overlay.active {
+        opacity: 1;
+        pointer-events: all;
+    }
+
+.side-menu {
+    position: fixed;
+    top: 0;
+    right: -300px;
+    width: 280px;
+    height: 100%;
+    background: #e9e9e9;
+    box-shadow: -3px 0 8px rgba(0,0,0,0.1);
+    transition: right 0.3s ease;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 40px;
+}
+
+    .side-menu.active {
+        right: 0;
+    }
+
+    .side-menu .back-btn {
+        align-self: flex-start;
+        margin-left: 20px;
+        font-size: 22px;
+        cursor: pointer;
+    }
+
+    .side-menu h3 {
+        margin-top: 10px;
+        font-size: 16px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+    }
+
+    .side-menu button {
+        width: 180px;
+        margin-top: 25px;
+        padding: 10px;
+        border: none;
+        border-radius: 4px;
+		background: #e9e9e9;
+        font-weight: 600;
+        cursor: pointer;
+        text-align: right; 
+        color: black;
+        transition: background 0.2s ease;
+    }
+
+        .side-menu button:hover {
+            background: #052f85;
+			color: #ffffff;
+		
+        }
+
+    .side-menu .menu-item {
+        background: none;
+        color: #111;
+        border: none;
+        font-size: 14px;
+        font-weight: 600;
+        margin-top: 20px;
+        cursor: pointer;
+        text-align: right; 
+    }
+
+    .side-menu hr {
+        width: 80%;
+        border: 0;
+        border-top: 1px solid #aaa;
+        margin: 20px 0;
+    }
