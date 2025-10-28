@@ -1,0 +1,91 @@
+@font-face {
+	font-family: 'FuturaCyrillicBold';
+	src: url('./fonts/futura/FuturaCyrillicBold.ttf') format('truetype');
+	font-weight: bold;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'Garet-Book';
+	src: url('./fonts/garet/Garet-Book.otf') format('opentype');
+	font-weight: regular;
+	font-style: normal;
+}
+
+body {
+	background: #4379e7;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100vh;
+}
+
+.login-container {
+	background: #ffffff;
+	width: 510px;
+	height: 644px;
+	padding: 30px;
+	border: 2px solid black;
+	border-radius: 12px;
+	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+img {
+	margin: 20px 35% 10px 35%;
+	height: 147px;
+	width: 147px;
+}
+
+h2 {
+	font-family: 'FuturaCyrillicBold';
+	font-size: 24px;
+	text-align: center;
+	margin-bottom: 30px;
+	color: #000000;
+}
+
+.form-group {
+	display: grid;
+	justify-content: center;
+	margin-bottom: 25px;
+}
+
+input {
+	font-family: 'Garet-Book';
+	background: #d9d9d9;
+	width: 362px;
+	height: 42px;
+	padding: 10px;
+	border: 0px;
+	border-radius: 5px;
+	font-size: 14px;
+}
+
+input:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+.error {
+  color: red;
+  font-size: 13px;
+  margin-top: 5px;
+  display: none;
+}
+
+button {
+	width: 85px;
+	height: 36px;
+	padding: 10px;
+	margin: 35px 40%;
+	background: #06379b;
+	border: none;
+	color: white;
+	font-weight: bold;
+	border-radius: 4px;
+	cursor: pointer;
+}
+
+button:hover {
+	background: #0056b3;
+}
