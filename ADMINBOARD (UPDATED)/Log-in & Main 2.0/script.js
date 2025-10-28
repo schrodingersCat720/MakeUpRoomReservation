@@ -44,7 +44,4 @@
 		}
 	  }
 
-      if (valid) { //placeholder for successful login, replace with redirectory once home page is available
-         window.location.href = 'main.php'; 
-      }
     });
