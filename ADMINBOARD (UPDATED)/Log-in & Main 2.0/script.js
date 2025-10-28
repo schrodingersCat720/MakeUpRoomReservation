@@ -31,6 +31,18 @@
         passwordError.style.display = 'block';
         valid = false;
       }
+	  
+	  //Check credentials after input
+	  if (valid) {
+		const validEmail = 'admin@plv.edu.ph';
+		const validPassword = 'admin123';
+
+		if (emailValue === validEmail && passwordValue === validPassword) {
+		  window.location.href = 'main.php'; //redirect
+		} else {
+		  alert('Invalid email or password!');
+		}
+	  }
 
       if (valid) { //placeholder for successful login, replace with redirectory once home page is available
          window.location.href = 'main.php'; 
