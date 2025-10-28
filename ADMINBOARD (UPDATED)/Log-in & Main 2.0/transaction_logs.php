@@ -67,7 +67,7 @@ $logs = $conn->query("
   <div class="menu-icon" id="menuToggle">☰</div>
 </nav>
 
-<div class="content">
+<div class="contentTransact">
   <div class="right-col">
     <div class="right-outer">
       <div class="right-inner">
@@ -113,8 +113,8 @@ $logs = $conn->query("
   <div class="back-btn" id="backBtn">◀</div>
   <h3>MENU</h3>
   <button class="Transactionbtn">Transaction Logs</button>
-  <div>
-	  <a href="main.php" class="back2Dash">Back to Dashboard</a>
+  <div class="back2Dash">
+	  <a href="main.php">Back to Dashboard</a>
   </div>
   <hr>
   <button class="menu-item">Log-out Admin</button>
