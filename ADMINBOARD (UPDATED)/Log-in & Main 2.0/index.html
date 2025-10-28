@@ -4,15 +4,15 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Login Form</title>
-  <link rel="stylesheet" href="indexStyle.css" />
+  <link rel="stylesheet" href="admin.css" />
 </head>
 <body class="log-in">
   <div class="login-container">
-	<img src="plv_logo.png" alt="plv_logo">
-    <h2>Admin</h2>
+	<img src="plv_logo.png" alt="plv_logo" class="loginLogo">
+    <h2 class="admin">Admin</h2>
     <form id="loginForm" novalidate>
       <div class="form-group">
-        <input
+        <input class="loginInput"
           type="email"
           id="email"
           placeholder="Enter your email"
@@ -23,7 +23,7 @@
       </div>
 
       <div class="form-group">
-        <input
+        <input class="loginInput"
           type="password"
           id="password"
           placeholder="Enter your password"
@@ -32,7 +32,7 @@
         <div class="error" id="passwordError">Please enter your password.</div>
       </div>
 
-      <button type="submit">Log In</button>
+      <button class="loginButton" type="submit">Log In</button>
     </form>
   </div>
 
