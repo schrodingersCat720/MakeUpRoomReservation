@@ -193,6 +193,7 @@ nav {
     max-width: 100%;
     gap: 2vw;
 	flex-direction:row;
+	margin-top: 140px;
 }
 
 /* LEFT COLUMN */
