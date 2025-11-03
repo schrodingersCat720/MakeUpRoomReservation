@@ -333,7 +333,7 @@ const logoutAdminBtn = document.querySelectorAll('.menu-item')[0];
 logoutAdminBtn.addEventListener('click', () => {
   const confirmLogout = confirm('Are you sure you want to log out?');
   if (confirmLogout) {
-    window.location.href = 'index.html';
+    window.location.href = 'index.php';
   }
 });
 
