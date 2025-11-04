@@ -1,6 +1,32 @@
-<?php 
+<?php
+// Start session early to avoid header issues from included files
+session_start();
+
 include 'connect.php';
 include 'weekly_reset.php';
+
+// Protect page
+if (!isset($_SESSION['user'])) {
+    header("Location: index.php");
+    exit();
+}
+
+/**
+ * Helper to bind params dynamically (bind_param requires references).
+ * $stmt: mysqli_stmt
+ * $types: string of types (e.g. "iss")
+ * $values: array of values
+ */
+function bind_params_by_ref($stmt, $types, &$values) {
+    if (empty($types)) return true;
+    $refs = [];
+    $refs[] = $types;
+    foreach ($values as $i => $v) {
+        // create references to values
+        $refs[] = &$values[$i];
+    }
+    return call_user_func_array([$stmt, 'bind_param'], $refs);
+}
 
 /* -----------------------------
    AJAX HANDLERS
@@ -77,7 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['ajax'])) {
     if (!empty($selectedCampus)) {
         $query .= " AND c.CampusID = ?";
         $params["types"] .= "i";
-        $params["values"][] = $selectedCampus;
+        $params["values"][] = (int)$selectedCampus;
     }
     if (!empty($selectedBuilding)) {
         $query .= " AND b.BuildingName = ?";
@@ -106,7 +132,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['ajax'])) {
 
     $stmt = $conn->prepare($query);
     if ($params["types"]) {
-        $stmt->bind_param($params["types"], ...$params["values"]);
+        // bind by reference using helper
+        bind_params_by_ref($stmt, $params["types"], $params["values"]);
     }
     $stmt->execute();
     $result = $stmt->get_result();
@@ -217,19 +244,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['ajax'])) {
                                     <strong><?= htmlspecialchars($room["RoomName"]) ?></strong>
                                     <small>
                                         <?= htmlspecialchars($room["CampusName"]) ?> - <?= htmlspecialchars($room["BuildingName"]) ?><br>
-                                        <?= htmlspecialchars(date('l', strtotime($selectedDate))) ?><br>
+                                        <?php if ($selectedDate): ?>
+                                          <?= htmlspecialchars(date('l', strtotime($selectedDate))) ?><br>
+                                        <?php endif; ?>
                                         <?= htmlspecialchars($room["TimeAvailable"]) ?>
                                     </small>
                                 </div>
+                                <?php
+                                    // Use json_encode for safe embedding into JS
+                                    $jsRoomID = json_encode($room['RoomID']);
+                                    $jsCampus = json_encode($room['CampusName']);
+                                    $jsBuilding = json_encode($room['BuildingName']);
+                                    $jsDate = json_encode($selectedDate);
+                                    $jsTime = json_encode($room['TimeAvailable']);
+                                ?>
                                 <button 
                                   class="select-btn" 
-                                  onclick="openReservationForm(
-                                    '<?= $room['RoomID'] ?>',
-                                    '<?= htmlspecialchars($room['CampusName']) ?>',
-                                                                        '<?= htmlspecialchars($room['BuildingName']) ?>',
-                                    '<?= htmlspecialchars($selectedDate) ?>',
-                                    '<?= htmlspecialchars($room['TimeAvailable']) ?>'
-                                  )"
+                                  onclick="openReservationForm(<?= $jsRoomID ?>, <?= $jsCampus ?>, <?= $jsBuilding ?>, <?= $jsDate ?>, <?= $jsTime ?>)"
                                 >
                                   Select
                                 </button>
@@ -333,7 +364,8 @@ const logoutAdminBtn = document.querySelectorAll('.menu-item')[0];
 logoutAdminBtn.addEventListener('click', () => {
   const confirmLogout = confirm('Are you sure you want to log out?');
   if (confirmLogout) {
-    window.location.href = 'index.php';
+    // Redirect to logout.php to properly destroy session and cookie
+    window.location.href = 'logout.php';
   }
 });
 
