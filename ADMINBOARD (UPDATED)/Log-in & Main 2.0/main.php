@@ -1,4 +1,6 @@
 <?php 
+require_once __DIR__ . '/auth_check.php';
+
 include 'connect.php';
 include 'weekly_reset.php';
 
