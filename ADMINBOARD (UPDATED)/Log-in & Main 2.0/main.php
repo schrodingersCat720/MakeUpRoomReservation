@@ -149,6 +149,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['ajax'])) {
         <p>Make-Up Class Room Reservation</p>
       </div>
     </div>
+	<div class="greetings">
+		<div><h4>Hello, PLV Admin</h4></div>
+		<div><a href="profile.php"><img src="image/profIcon.png" alt="profileIcon" class="profIcon"></a></div>
+	</div>
     <div class="menu-icon" id="menuToggle">☰</div>
 </nav>
 
@@ -202,15 +206,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['ajax'])) {
 
             <button type="submit" class="find-btn">Find</button>
         </form>
+		<button class="find-btn">Update Rooms</button>
     </div>
 
     <div class="divider"></div>
 
     <!-- Results -->
     <div class="right-col">
+		<div class="dashCampus">
+			<button class="campusButton" id="lButton">MAIN</button>
+			<button class="campusButton">ANNEX</button>
+			<button class="campusButton" id="rButton">CPAG</button>
+		</div>
         <div class="right-outer">
             <div class="right-inner">
-                <h2>Available Rooms:</h2>
+                <h2>Available Rooms for [Date] at [Time] for [Duration]:</h2>
                 <div id="roomList">
                     <?php if (!empty($rooms)): ?>
                         <?php foreach ($rooms as $room): ?>
