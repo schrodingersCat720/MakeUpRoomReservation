@@ -158,6 +158,19 @@ nav {
         nav .menu-icon:hover {
             transform: scale(1.1);
         }
+	
+	.greetings {
+		display:flex;
+		flex-direction:row;
+		margin-left:52%;
+		cursor: default;
+		align-items: center;
+		gap: 12px;
+	}
+	
+	.profIcon {
+		width: 80%;
+	}
 
 /* MAIN CONTENT */
 .back2Dash {
@@ -273,7 +286,43 @@ nav {
 .right-col {
     flex: 1;
     display: flex;
+	flex-direction: column;
     justify-content: flex-start;
+}
+
+.dashCampus {
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-start;
+	gap:1px;
+}
+
+.campusButton {
+	width: 100px;
+	height: 30px;
+	font-family: 'Garet-Book';
+	background: #06379b;
+	border: none;
+	color: white;
+	font-weight: bold;
+	cursor: pointer;
+	margin-bottom:5px;
+}
+
+.campusButton:hover {
+	background: #072f85;
+}
+
+.campusButton:active {
+	background: #000000;
+}
+
+#lButton {
+	border-top-left-radius:10px;
+}
+
+#rButton {
+	border-top-right-radius:10px;
 }
 
 .right-outer {
