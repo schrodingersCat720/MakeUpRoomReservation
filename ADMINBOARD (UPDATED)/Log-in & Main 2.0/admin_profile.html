@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ad</title>
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+
+<nav>
+  <div class="nav-left">
+    <img src="plv_logo.png" alt="PLV Logo">
+    <div class="title-block">
+      <h1>Pamantasan ng Lungsod ng Valenzuela</h1>
+      <p>Make-Up Class Room Reservation</p>
+    </div>
+  </div>
+
+  <div class="menu-icon" id="menuToggle">☰</div>
+</nav>
+
+<!-- Overlay + Side Menu -->
+<div class="overlay" id="overlay"></div>
+
+<div class="side-menu" id="sideMenu">
+  <div class="back-btn" id="backBtn">◀</div>
+  <h3>MENU</h3>
+
+  <button class="Transactionbtn">Transaction Logs</button>
+
+  <div class="back2Dash">
+    <a href="main.php">Back to Dashboard</a>
+  </div>
+
+  <hr>
+
+  <button class="menu-item">Log-out Admin</button>
+</div>
+
+
+<!-- ================= PROFILE SECTION ================= -->
+<div class="profile-container">
+  <h2 class="profile-title">Hello, Admin001</h2>
+
+  <div class="profile-card">
+    <!-- Instead of inline form, just show info + Edit button -->
+    <p><strong>Password:</strong> ********</p>
+    <p><strong>Station:</strong> PLV Registrar</p>
+    <p><strong>Position:</strong> Admin</p>
+    <p><strong>Task:</strong> Make-Up Class Admin</p>
+
+    <button class="edit-btn" id="editBtn">Edit Profile</button>
+  </div>
+</div>
+
+<!-- ================= POPUP MODAL ================= -->
+<div id="editModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>Edit Credentials</h3>
+      <span class="close" id="closeModal">&times;</span>
+    </div>
+
+    <form id="editForm">
+      <div class="field-group">
+        <label>New Password:</label>
+        <input type="password" id="newPassword" placeholder="Enter new password" required />
+      </div>
+
+      <div class="field-group">
+        <label>Confirm Password:</label>
+        <input type="password" id="confirmPassword" placeholder="Confirm new password" required />
+      </div>
+
+      <div class="field-group">
+        <label>Station:</label>
+        <select>
+          <option>PLV Registrar</option>
+          <option>PLV Admin Office</option>
+          <option>PLV MIS</option>
+        </select>
+      </div>
+
+      <div class="field-group">
+        <label>Position:</label>
+        <select>
+          <option>Admin</option>
+          <option>Staff</option>
+          <option>Faculty</option>
+        </select>
+      </div>
+
+      <div class="field-group">
+        <label>Task:</label>
+        <select>
+          <option>Make-Up Class Admin</option>
+          <option>System Supervisor</option>
+          <option>Clerk</option>
+        </select>
+      </div>
+
+      <div class="modal-actions">
+        <button type="submit" class="save-btn">Save Changes</button>
+        <button type="button" class="cancel-btn" id="cancelBtn">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+<!-- ================= SCRIPT ================= -->
+<script>
+  // Side menu
+  const menuToggle = document.getElementById('menuToggle');
+  const sideMenu = document.getElementById('sideMenu');
+  const overlay = document.getElementById('overlay');
+  const backBtn = document.getElementById('backBtn');
+
+  menuToggle.addEventListener('click', () => {
+    sideMenu.classList.add('active');
+    overlay.classList.add('active');
+  });
+
+  backBtn.addEventListener('click', closeMenu);
+  overlay.addEventListener('click', closeMenu);
+
+  function closeMenu() {
+    sideMenu.classList.remove('active');
+    overlay.classList.remove('active');
+  }
+
+  // Logout
+  document.querySelector('.menu-item').addEventListener('click', () => {
+    if (confirm('Are you sure you want to log out?')) {
+      window.location.href = 'index.php';
+    }
+  });
+
+  // Transaction logs
+  document.querySelector('.Transactionbtn').addEventListener('click', () => {
+    window.location.href = 'transaction_logs.php';
+  });
+
+  // Modal logic
+  const editBtn = document.getElementById('editBtn');
+  const editModal = document.getElementById('editModal');
+  const closeModal = document.getElementById('closeModal');
+  const cancelBtn = document.getElementById('cancelBtn');
+
+  editBtn.addEventListener('click', () => {
+    editModal.style.display = 'block';
+  });
+
+  closeModal.addEventListener('click', () => {
+    editModal.style.display = 'none';
+  });
+
+  cancelBtn.addEventListener('click', () => {
+    editModal.style.display = 'none';
+  });
+
+  window.addEventListener('click', (event) => {
+    if (event.target === editModal) {
+      editModal.style.display = 'none';
+    }
+  });
+
+  document.getElementById('editForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const newPass = document.getElementById('newPassword').value;
+    const confirmPass = document.getElementById('confirmPassword').value;
+
+    if (newPass !== confirmPass) {
+      alert('Passwords do not match. Please try again.');
+      return;
+    }
+
+    alert('Credentials updated successfully!');
+    editModal.style.display = 'none';
+
+    // TODO: Send data to backend via fetch/AJAX
+  });
+</script>
+
+</body>
+</html>
