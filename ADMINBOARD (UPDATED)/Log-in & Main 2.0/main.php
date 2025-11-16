@@ -151,7 +151,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['ajax'])) {
     </div>
 	<div class="greetings">
 		<div><h4>Hello, PLV Admin</h4></div>
-		<div><a href="profile.php"><img src="image/profIcon.png" alt="profileIcon" class="profIcon"></a></div>
+		<div><a href="admin_profile.html"><img src="image/profIcon.png" alt="profileIcon" class="profIcon"></a></div>
 	</div>
     <div class="menu-icon" id="menuToggle">☰</div>
 </nav>
