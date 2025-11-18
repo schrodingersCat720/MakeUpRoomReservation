@@ -117,16 +117,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['ajax'])) {
     <meta charset="utf-8" />
     <title>Room Reservation</title>
     <link rel="stylesheet" href="admin.css" />
-    <style>
-        .room-card { background:#fff; border:1px solid #ccc; padding:15px; margin-bottom:10px; border-radius:6px; }
-        .room-card.no-rooms { background:#f9f9f9; border:1px dashed #aaa; text-align:center; color:#555; }
 
-        .popup-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); display:none; justify-content:center; align-items:center; z-index:2000; }
-        .popup-overlay.active { display:flex; }
-        .popup-box { background:#fff; padding:20px; border-radius:8px; width:360px; max-width:90%; text-align:center; box-shadow:0 6px 18px rgba(0,0,0,0.2); }
-        .popup-box input[type="file"], .popup-box select { width:100%; margin-bottom:10px; }
-        .update-msg { margin-top:10px; }
-    </style>
 </head>
 <body>
 <nav>
@@ -253,8 +244,52 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['ajax'])) {
 </div>
 
 <div class="overlay" id="overlay"></div>
+<div class="side-menu" id="sideMenu">
+  <div class="back-btn" id="backBtn">◀</div>
+  <h3>MENU</h3>
+
+  <button class="Transactionbtn">Transaction Logs</button>
+
+
+  <hr>
+
+  <button class="menu-item">Log-out Admin</button>
+</div>
 
 <script>
+ // Side menu
+ const menuToggle = document.getElementById('menuToggle');
+  const sideMenu = document.getElementById('sideMenu');
+  const overlay = document.getElementById('overlay');
+  const backBtn = document.getElementById('backBtn');
+
+  menuToggle.addEventListener('click', () => {
+    sideMenu.classList.add('active');
+    overlay.classList.add('active');
+  });
+
+  backBtn.addEventListener('click', closeMenu);
+  overlay.addEventListener('click', closeMenu);
+
+  function closeMenu() {
+    sideMenu.classList.remove('active');
+    overlay.classList.remove('active');
+  }
+
+  // Logout
+  document.querySelector('.menu-item').addEventListener('click', () => {
+    if (confirm('Are you sure you want to log out?')) {
+      window.location.href = 'index.php';
+    }
+  });
+
+  // Transaction logs
+  document.querySelector('.Transactionbtn').addEventListener('click', () => {
+    window.location.href = 'transaction_logs.php';
+  });
+
+  
+
 const buildingSelect = document.getElementById('building');
 const timeSelect = document.getElementById('prefTime');
 const dateInput = document.getElementById('date');
