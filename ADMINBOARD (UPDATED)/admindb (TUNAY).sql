@@ -11,7 +11,6 @@ SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
 
-
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
@@ -22,7 +21,48 @@ SET time_zone = "+00:00";
 --
 
 -- --------------------------------------------------------
+--
+-- Table structure for table `teachers`
+--
 
+CREATE TABLE `teachers` (
+  `TeacherID` int(11) NOT NULL AUTO_INCREMENT,
+  `Name` varchar(255) NOT NULL,
+  `Department` varchar(255) NOT NULL,
+  PRIMARY KEY (`TeacherID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Sample data for table `teachers`
+--
+
+INSERT INTO `teachers` (`Name`, `Department`) VALUES
+('Juan Dela Cruz', 'Mathematics'),
+('Maria Santos', 'Science'),
+('Pedro Reyes', 'Filipino');
+
+-- --------------------------------------------------------
+--
+-- Table structure for table `subjects`
+--
+
+CREATE TABLE `subjects` (
+  `SubjectID` int(11) NOT NULL AUTO_INCREMENT,
+  `SubjectName` varchar(255) NOT NULL,
+  `SubjectCode` varchar(50) NOT NULL,
+  PRIMARY KEY (`SubjectID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Sample data for table `subjects`
+--
+
+INSERT INTO `subjects` (`SubjectName`, `SubjectCode`) VALUES
+('Calculus', 'MATH101'),
+('Physics', 'SCI102'),
+('Filipino Literature', 'FIL103');
+
+-- --------------------------------------------------------
 --
 -- Table structure for table `buildings`
 --
@@ -46,7 +86,6 @@ INSERT INTO `buildings` (`BuildingID`, `BuildingName`, `CampusID`) VALUES
 (6, 'CPAG', 3);
 
 -- --------------------------------------------------------
-
 --
 -- Table structure for table `campus`
 --
@@ -66,7 +105,6 @@ INSERT INTO `campus` (`CampusID`, `CampusName`) VALUES
 (3, 'CPAG');
 
 -- --------------------------------------------------------
-
 --
 -- Table structure for table `reservations`
 --
@@ -87,7 +125,6 @@ CREATE TABLE `reservations` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
-
 --
 -- Table structure for table `rooms`
 --
@@ -123,7 +160,6 @@ INSERT INTO `rooms` (`RoomID`, `RoomName`, `BuildingID`, `TimeAvailable`, `DaysA
 (15, 'COED303', 3, '3:00 PM – 6:00 PM', 'Monday,Tuesday,Wednesday', 'Thursday, Friday, Saturday');
 
 -- --------------------------------------------------------
-
 --
 -- Table structure for table `transactionlogs`
 --
@@ -135,80 +171,45 @@ CREATE TABLE `transactionlogs` (
   `LoggedAt` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Indexes for dumped tables
---
-
---
--- Indexes for table `buildings`
---
+-- --------------------------------------------------------
+-- Indexes
 ALTER TABLE `buildings`
   ADD PRIMARY KEY (`BuildingID`),
   ADD KEY `CampusID` (`CampusID`);
 
---
--- Indexes for table `campus`
---
 ALTER TABLE `campus`
   ADD PRIMARY KEY (`CampusID`);
 
---
--- Indexes for table `reservations`
---
 ALTER TABLE `reservations`
   ADD PRIMARY KEY (`ReservationID`);
 
---
--- Indexes for table `rooms`
---
 ALTER TABLE `rooms`
   ADD PRIMARY KEY (`RoomID`),
   ADD KEY `BuildingID` (`BuildingID`);
 
---
--- Indexes for table `transactionlogs`
---
 ALTER TABLE `transactionlogs`
   ADD PRIMARY KEY (`LogID`),
   ADD KEY `ReservationID` (`ReservationID`);
 
---
--- AUTO_INCREMENT for dumped tables
---
-
---
--- AUTO_INCREMENT for table `reservations`
---
+-- --------------------------------------------------------
+-- AUTO_INCREMENT
 ALTER TABLE `reservations`
   MODIFY `ReservationID` int(11) NOT NULL AUTO_INCREMENT;
 
---
--- AUTO_INCREMENT for table `transactionlogs`
---
 ALTER TABLE `transactionlogs`
   MODIFY `LogID` int(11) NOT NULL AUTO_INCREMENT;
 
---
--- Constraints for dumped tables
---
-
---
--- Constraints for table `buildings`
---
+-- --------------------------------------------------------
+-- Constraints
 ALTER TABLE `buildings`
   ADD CONSTRAINT `buildings_ibfk_1` FOREIGN KEY (`CampusID`) REFERENCES `campus` (`CampusID`);
 
---
--- Constraints for table `rooms`
---
 ALTER TABLE `rooms`
   ADD CONSTRAINT `rooms_ibfk_1` FOREIGN KEY (`BuildingID`) REFERENCES `buildings` (`BuildingID`);
 
---
--- Constraints for table `transactionlogs`
---
 ALTER TABLE `transactionlogs`
   ADD CONSTRAINT `transactionlogs_ibfk_1` FOREIGN KEY (`ReservationID`) REFERENCES `reservations` (`ReservationID`) ON DELETE CASCADE;
+
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

@@ -1,6 +1,5 @@
 <?php 
 require_once __DIR__ . '/auth_check.php';
-
 include 'connect.php';
 include 'weekly_reset.php';
 
@@ -92,12 +91,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['ajax'])) {
         $params["values"][] = $selectedTime;
     }
     if (!empty($selectedDate)) {
-        // Only show rooms available on that weekday (DaysAvailable stored as comma-separated)
         $query .= " AND FIND_IN_SET(?, r.DaysAvailable) > 0";
         $params["types"] .= "s";
         $params["values"][] = $dayOfWeek;
 
-        // Exclude rooms already reserved for that exact date
         $query .= " AND r.RoomID NOT IN (
                       SELECT RoomID FROM Reservations 
                       WHERE Date = ? AND Status = 'active'
@@ -108,7 +105,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['ajax'])) {
 
     $stmt = $conn->prepare($query);
     if ($params["types"]) {
-        // bind_param requires references in PHP <= 7.4; we will use a dynamic call
         $bind_names[] = $params["types"];
         for ($i=0; $i<count($params["values"]); $i++) {
             $bind_name = 'bind' . $i;
@@ -132,42 +128,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['ajax'])) {
     <title>Room Reservation</title>
     <link rel="stylesheet" href="admin.css" />
     <style>
-        .room-card {
-            background-color: #fff;
-            border: 1px solid #ccc;
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 6px;
-        }
-        .room-card.no-rooms {
-            background-color: #f9f9f9;
-            border: 1px dashed #aaa;
-            text-align: center;
-            color: #555;
-        }
+        .room-card { background:#fff; border:1px solid #ccc; padding:15px; margin-bottom:10px; border-radius:6px; }
+        .room-card.no-rooms { background:#f9f9f9; border:1px dashed #aaa; text-align:center; color:#555; }
 
-        /* popup styles */
-        .popup-overlay {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5);
-            display:none;
-            justify-content:center;
-            align-items:center;
-            z-index: 2000;
-        }
+        .popup-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); display:none; justify-content:center; align-items:center; z-index:2000; }
         .popup-overlay.active { display:flex; }
-        .popup-box {
-            background:#fff;
-            padding:20px;
-            border-radius:8px;
-            width:360px;
-            max-width:90%;
-            text-align:center;
-            box-shadow:0 6px 18px rgba(0,0,0,0.2);
-        }
-        .popup-box input[type="file"] { width:100%; }
+        .popup-box { background:#fff; padding:20px; border-radius:8px; width:360px; max-width:90%; text-align:center; box-shadow:0 6px 18px rgba(0,0,0,0.2); }
+        .popup-box input[type="file"], .popup-box select { width:100%; margin-bottom:10px; }
         .update-msg { margin-top:10px; }
     </style>
 </head>
@@ -190,7 +157,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['ajax'])) {
 <div class="content">
     <div class="left-col">
         <form method="POST" class="filter-card" id="filterForm">
-            <!-- Campus -->
             <label for="campus">Select a Campus:</label>
             <select name="campus" id="campus">
                 <option value="">All campuses</option>
@@ -203,7 +169,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['ajax'])) {
                 ?>
             </select>
 
-            <!-- Building -->
             <label for="building">Select a Building:</label>
             <select name="building" id="building">
                 <?php
@@ -218,18 +183,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['ajax'])) {
                         $selected = ($selectedBuilding === $building) ? 'selected' : '';
                         echo "<option value='$building' $selected>$building</option>";
                     }
-                } else {
-                    echo "<option value=''>Select a campus first</option>";
-                }
+                } else { echo "<option value=''>Select a campus first</option>"; }
                 ?>
             </select>
 
-            <!-- Date -->
             <label for="date">Select Date:</label>
-            <input type="date" name="date" id="date" required 
-                   value="<?= htmlspecialchars($selectedDate) ?>">
+            <input type="date" name="date" id="date" required value="<?= htmlspecialchars($selectedDate) ?>">
 
-            <!-- Time -->
             <label for="prefTime">Preferred Time:</label>
             <select name="prefTime" id="prefTime">
                 <option value="">All times</option>
@@ -238,13 +198,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['ajax'])) {
             <button type="submit" class="find-btn">Find</button>
         </form>
 
-        <!-- Update Rooms button that opens popup -->
-        <button class="find-btn" id="updateBtn">Update Rooms</button>
+        <!-- Update Database button -->
+        <button class="find-btn" id="updateBtn">Update Database</button>
     </div>
 
     <div class="divider"></div>
 
-    <!-- Results -->
     <div class="right-col">
         <div class="dashCampus">
             <button class="campusButton" id="lButton">MAIN</button>
@@ -275,9 +234,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['ajax'])) {
                                     '<?= htmlspecialchars($selectedDate) ?>',
                                     '<?= htmlspecialchars($room['TimeAvailable']) ?>'
                                   )"
-                                >
-                                  Select
-                                </button>
+                                >Select</button>
                             </div>
                         <?php endforeach; ?>
                     <?php else: ?>
@@ -294,35 +251,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['ajax'])) {
     </div>
 </div>
 
-<!-- UPDATE ROOMS POPUP -->
+<!-- UPDATE DATABASE POPUP -->
 <div id="updatePopup" class="popup-overlay" aria-hidden="true">
   <div class="popup-box" role="dialog" aria-modal="true" aria-labelledby="updateTitle">
-      <h3 id="updateTitle">Update Rooms</h3>
-      <p>Upload an Excel (.xlsx) file to update the rooms database. The sheet should have a header row:</p>
-      <p><small><em>RoomID | RoomName | BuildingID | TimeAvailable | DaysAvailable | DaysOccupied</em></small></p>
+      <h3 id="updateTitle">Update Database</h3>
+      <p>Upload an Excel (.xlsx) file to update the database. Choose the table first:</p>
 
       <form id="uploadForm" enctype="multipart/form-data" method="post" novalidate>
+          <label for="tableSelect">Select Table:</label>
+          <select name="table" id="tableSelect" required>
+              <option value="">--Select Table--</option>
+              <option value="rooms">Rooms</option>
+              <option value="teachers">Teachers</option>
+              <option value="subjects">Subjects</option>
+          </select>
+
           <input type="file" name="file" accept=".xlsx" required>
-          <br><br>
           <button type="submit" class="find-btn">Upload & Update</button>
       </form>
 
       <button onclick="closePopup()" class="close-btn">Close</button>
-
       <div id="updateMessage" class="update-msg" aria-live="polite"></div>
   </div>
 </div>
 
-<!-- OVERLAY AND SIDE MENU -->
 <div class="overlay" id="overlay"></div>
-
-<div class="side-menu" id="sideMenu">
-  <div class="back-btn" id="backBtn">◀</div>
-  <h3>MENU</h3>
-  <button class="Transactionbtn">Transaction Logs</button>
-  <hr>
-  <button class="menu-item">Log-out Admin</button>
-</div>
 
 <script>
 const campusSelect = document.getElementById('campus');
@@ -342,23 +295,15 @@ campusSelect.addEventListener('change', () => {
         body: 'ajax=getBuildings&campusID=' + encodeURIComponent(campusID)
     })
     .then(res => res.text())
-    .then(data => {
-        buildingSelect.innerHTML = data;
-    });
+    .then(data => { buildingSelect.innerHTML = data; });
 });
 
 // Load time slots when building + date are selected
 function loadTimeSlots() {
     const buildingName = buildingSelect.value;
     const selectedDate = dateInput.value;
-
-    if (!buildingName || !selectedDate) {
-        timeSelect.innerHTML = "<option value=''>All times</option>";
-        return;
-    }
-
+    if (!buildingName || !selectedDate) { timeSelect.innerHTML = "<option value=''>All times</option>"; return; }
     timeSelect.innerHTML = "<option>Loading...</option>";
-
     fetch('main.php', {
         method: 'POST',
         headers: {'Content-Type': 'application/x-www-form-urlencoded'},
@@ -366,61 +311,12 @@ function loadTimeSlots() {
               '&selectedDate=' + encodeURIComponent(selectedDate)
     })
     .then(res => res.text())
-    .then(data => {
-        timeSelect.innerHTML = data;
-    });
+    .then(data => { timeSelect.innerHTML = data; });
 }
-
 buildingSelect.addEventListener('change', loadTimeSlots);
 dateInput.addEventListener('change', loadTimeSlots);
 
-// Side menu
-const menuToggle = document.getElementById('menuToggle');
-const sideMenu = document.getElementById('sideMenu');
-const overlay = document.getElementById('overlay');
-const backBtn = document.getElementById('backBtn');
-
-menuToggle.addEventListener('click', () => {
-  sideMenu.classList.add('active');
-  overlay.classList.add('active');
-});
-
-backBtn.addEventListener('click', closeMenu);
-overlay.addEventListener('click', closeMenu);
-
-function closeMenu(){
-  sideMenu.classList.remove('active');
-  overlay.classList.remove('active');
-}
-
-const logoutAdminBtn = document.querySelectorAll('.menu-item')[0];
-logoutAdminBtn.addEventListener('click', () => {
-  const confirmLogout = confirm('Are you sure you want to log out?');
-  if (confirmLogout) {
-    window.location.href = 'index.php';
-  }
-});
-
-// Transaction logs button
-document.querySelector('.Transactionbtn').addEventListener('click', () => {
-  window.location.href = 'transaction_logs.php';
-});
-
-// Reservation form redirect
-function openReservationForm(roomID, campus, building, date, time) {
-  const params = new URLSearchParams({
-    roomID: roomID,
-    campus: campus,
-    building: building,
-    date: date,   // <-- this is already YYYY-MM-DD
-    time: time
-  });
-  window.location.href = `Reservation Form/form.html?${params.toString()}`;
-}
-
-/* ---------------------
-   Update Rooms popup + upload
-   ---------------------*/
+// Update Database popup
 const updateBtn = document.getElementById('updateBtn');
 const updatePopup = document.getElementById('updatePopup');
 const uploadForm = document.getElementById('uploadForm');
@@ -442,19 +338,14 @@ uploadForm.addEventListener('submit', function (e) {
     updateMessage.innerHTML = 'Uploading...';
 
     const formData = new FormData(this);
+    const selectedTable = document.getElementById('tableSelect').value;
+    if (!selectedTable) { updateMessage.innerHTML = "<p style='color:red;'>Please select a table.</p>"; return; }
+    formData.append('table', selectedTable);
 
-    fetch("update_rooms.php", {
-        method: "POST",
-        body: formData
-    })
+    fetch("update_rooms.php", { method: "POST", body: formData })
     .then(res => res.text())
-    .then(data => {
-        updateMessage.innerHTML = data;
-    })
-    .catch(err => {
-        console.error(err);
-        updateMessage.innerHTML = "<p style='color:red;'>Upload failed. Check server logs.</p>";
-    });
+    .then(data => { updateMessage.innerHTML = data; })
+    .catch(err => { updateMessage.innerHTML = "<p style='color:red;'>Upload failed.</p>"; });
 });
 </script>
 </body>
