@@ -7,17 +7,17 @@
 }
 
 @font-face {
-	font-family: 'FuturaCyrillicBold';
-	src: url('fonts/FuturaCyrillicBold.ttf') format('truetype');
-	font-weight: bold;
-	font-style: normal;
+    font-family: 'FuturaCyrillicBold';
+    src: url('fonts/FuturaCyrillicBold.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
 }
 
 @font-face {
-	font-family: 'Garet-Book';
-	src: url('fonts/Garet-Book.otf') format('truetype');
-	font-weight: bold;
-	font-style: normal;
+    font-family: 'Garet-Book';
+    src: url('fonts/Garet-Book.otf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
 }
 
 body {
@@ -28,81 +28,101 @@ body {
 }
 /* LOG-IN*/
 .log-in {
-	background: #06379b;
-	display: flex;
+    background: #06379b;
+    display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
 }
+
 .login-container {
-	background: #ffffff;
-	width: 480px;
-	height: 540px;
-	padding: 30px;
-	border: 2px solid black;
-	border-radius: 47px;
-	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    background: #ffffff;
+    width: 480px;
+    height: 600px;
+    padding: 30px;
+    border: 2px solid black;
+    border-radius: 47px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 .loginLogo {
-	height: 140px;
-	margin: 20px 35% 10px 35%;
+    height: 140px;
+    margin: 20px 35% 10px 35%;
 }
 
+.toggle-text {
+    margin-top: 20px;
+    font-size: 0.9em;
+    text-align: center;
+    color: #666;
+}
+
+    .toggle-text a {
+        color: #007bff; /* A prominent color like blue for the link */
+        text-decoration: none; /* Remove the default underline */
+        font-weight: bold; /* Make the link text stand out */
+        transition: color 0.2s ease; /* Smooth color change on hover */
+    }
+
+        .toggle-text a:hover {
+            color: #0056b3; /* Darker blue on hover */
+            text-decoration: underline; /* Add underline back on hover */
+        }
+
 .admin {
-	font-family: 'FuturaCyrillicBold';
-	font-size: 24px;
-	text-align: center;
-	margin-bottom: 30px;
-	color: #000000;
+    font-family: 'FuturaCyrillicBold';
+    font-size: 24px;
+    text-align: center;
+    margin-bottom: 30px;
+    color: #000000;
 }
 
 .form-group {
-	display: grid;
-	justify-content: center;
-	margin-bottom: 25px;
+    display: grid;
+    justify-content: center;
+    margin-bottom: 25px;
 }
 
 .loginInput {
-	font-family: 'Garet-Book';
-	background: #d9d9d9;
-	width: 362px;
-	height: 42px;
-	padding: 10px;
-	border: 0px;
-	border-radius: 10px;
-	font-size: 14px;
+    font-family: 'Garet-Book';
+    background: #d9d9d9;
+    width: 362px;
+    height: 42px;
+    padding: 10px;
+    border: 0px;
+    border-radius: 10px;
+    font-size: 14px;
 }
 
-.loginInput:focus {
-  border-color: #007bff;
-  outline: none;
-}
+    .loginInput:focus {
+        border-color: #007bff;
+        outline: none;
+    }
 
 .error {
-  color: red;
-  font-size: 13px;
-  margin-top: 5px;
-  display: none;
+    color: red;
+    font-size: 13px;
+    margin-top: 5px;
+    display: none;
 }
 
 .loginButton {
-	width: 85px;
-	height: 36px;
-	padding: 10px;
-	margin: 35px 40%;
-	background: #06379b;
-	border: none;
-	color: white;
-	font-weight: bold;
-	border-radius: 7px;
-	cursor: pointer;
-	font-family: 'Garet-Book';
+    width: 85px;
+    height: 36px;
+    padding: 10px;
+    margin: 3px 40%;
+    background: #06379b;
+    border: none;
+    color: white;
+    font-weight: bold;
+    border-radius: 7px;
+    cursor: pointer;
+    font-family: 'Garet-Book';
 }
 
-.loginButton:hover {
-	background: #0056b3;
-}
+    .loginButton:hover {
+        background: #0056b3;
+    }
 
 /* NAVIGATION BAR */
 nav {
@@ -113,7 +133,7 @@ nav {
     justify-content: space-between;
     padding: 0 30px;
     width: 100%;
-	height: 100px;
+    height: 100px;
     box-sizing: border-box;
     box-shadow: 0 3px 8px rgba(0,0,0,0.1);
     position: fixed;
@@ -158,44 +178,46 @@ nav {
         nav .menu-icon:hover {
             transform: scale(1.1);
         }
-	
-	.greetings {
-		display:flex;
-		flex-direction:row;
-		margin-left:52%;
-		cursor: default;
-		align-items: center;
-		gap: 12px;
-	}
-	
-	.profIcon {
-		width: 80%;
-	}
 
- /* PROFILE ICON HOVER ANIMATION */
+.greetings {
+    display: flex;
+    flex-direction: row;
+    margin-left: 52%;
+    cursor: default;
+    align-items: center;
+    gap: 12px;
+}
+
+.profIcon {
+    width: 80%;
+}
+
+/* PROFILE ICON HOVER ANIMATION */
 .profIcon {
     width: 80%;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.profIcon:hover {
-    transform: scale(1.1); /* Slightly enlarge on hover */
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Optional subtle shadow */
-}
+    .profIcon:hover {
+        transform: scale(1.1); /* Slightly enlarge on hover */
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Optional subtle shadow */
+    }
 
 /* MAIN CONTENT */
 .back2Dash {
-	display: flex;
-	flex-direction: row-reverse;
-	padding: 0 3vw 10px;
-	margin-top: 140px;
+    display: flex;
+    flex-direction: row-reverse;
+    padding: 0 3vw 10px;
+    margin-top: 140px;
 }
-.back2Dash a {
-	color: #000000;
-}
-.back2Dash a:hover {
-	color: #003893;
-}
+
+    .back2Dash a {
+        color: #000000;
+    }
+
+        .back2Dash a:hover {
+            color: #003893;
+        }
 
 .content {
     display: flex;
@@ -209,15 +231,15 @@ nav {
 }
 
 .contentTransact {
-	display: flex;
+    display: flex;
     align-items: flex-start;
     padding: 0 3vw 40px;
     box-sizing: border-box;
     width: 100%;
     max-width: 100%;
     gap: 2vw;
-	flex-direction:row;
-	margin-top: 140px;
+    flex-direction: row;
+    margin-top: 140px;
 }
 
 /* LEFT COLUMN */
@@ -246,7 +268,7 @@ nav {
     /* FIXED INPUT + SELECT HEIGHTS (Preferred Date aligned) */
     .filter-card select,
     .filter-card input[type="date"] {
-		font-family: 'Garet-Book';
+        font-family: 'Garet-Book';
         width: 100%;
         padding: 0 12px;
         height: 42px;
@@ -297,43 +319,43 @@ nav {
 .right-col {
     flex: 1;
     display: flex;
-	flex-direction: column;
+    flex-direction: column;
     justify-content: flex-start;
 }
 
 .dashCampus {
-	display: flex;
-	flex-direction: row;
-	justify-content: flex-start;
-	gap:1px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 1px;
 }
 
 .campusButton {
-	width: 100px;
-	height: 30px;
-	font-family: 'Garet-Book';
-	background: #06379b;
-	border: none;
-	color: white;
-	font-weight: bold;
-	cursor: pointer;
-	margin-bottom:5px;
+    width: 100px;
+    height: 30px;
+    font-family: 'Garet-Book';
+    background: #06379b;
+    border: none;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    margin-bottom: 5px;
 }
 
-.campusButton:hover {
-	background: #072f85;
-}
+    .campusButton:hover {
+        background: #072f85;
+    }
 
-.campusButton:active {
-	background: #000000;
-}
+    .campusButton:active {
+        background: #000000;
+    }
 
 #lButton {
-	border-top-left-radius:10px;
+    border-top-left-radius: 10px;
 }
 
 #rButton {
-	border-top-right-radius:10px;
+    border-top-right-radius: 10px;
 }
 
 .right-outer {
@@ -475,18 +497,17 @@ nav {
         padding: 10px;
         border: none;
         border-radius: 4px;
-		background: #e9e9e9;
+        background: #e9e9e9;
         font-weight: 600;
         cursor: pointer;
-        text-align: right; 
+        text-align: right;
         color: black;
         transition: background 0.2s ease;
     }
 
         .side-menu button:hover {
             background: #052f85;
-			color: #ffffff;
-		
+            color: #ffffff;
         }
 
     .side-menu .menu-item {
@@ -497,7 +518,7 @@ nav {
         font-weight: 600;
         margin-top: 20px;
         cursor: pointer;
-        text-align: right; 
+        text-align: right;
     }
 
     .side-menu hr {
@@ -533,15 +554,15 @@ nav {
     line-height: 1.6;
 }
 
-.profile-card p {
-    font-size: 16px;
-    color: #444;
-    margin: 8px 0;
-}
+    .profile-card p {
+        font-size: 16px;
+        color: #444;
+        margin: 8px 0;
+    }
 
-.profile-card strong {
-    color: #111;
-}
+    .profile-card strong {
+        color: #111;
+    }
 
 /* EDIT BUTTON */
 .edit-btn {
@@ -557,17 +578,19 @@ nav {
     transition: background 0.3s ease;
 }
 
-.edit-btn:hover {
-    background: #0043a1;
-}
+    .edit-btn:hover {
+        background: #0043a1;
+    }
 
 /* ================= MODAL POPUP ================= */
 .modal {
     display: none;
     position: fixed;
     z-index: 1000;
-    left: 0; top: 0;
-    width: 100%; height: 100%;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
     background: rgba(0,0,0,0.6);
     backdrop-filter: blur(2px);
 }
@@ -589,12 +612,12 @@ nav {
     margin-bottom: 20px;
 }
 
-.modal-header h3 {
-    margin: 0;
-    font-size: 20px;
-    font-weight: 600;
-    color: #222;
-}
+    .modal-header h3 {
+        margin: 0;
+        font-size: 20px;
+        font-weight: 600;
+        color: #222;
+    }
 
 .close {
     cursor: pointer;
@@ -604,7 +627,9 @@ nav {
     transition: color 0.2s ease;
 }
 
-.close:hover { color: #000; }
+    .close:hover {
+        color: #000;
+    }
 
 /* FORM FIELDS */
 .field-group {
@@ -628,10 +653,10 @@ input, select {
     transition: border-color 0.2s ease;
 }
 
-input:focus, select:focus {
-    border-color: #0057b7;
-    outline: none;
-}
+    input:focus, select:focus {
+        border-color: #0057b7;
+        outline: none;
+    }
 
 /* SAVE BUTTON */
 .save-btn {
@@ -648,102 +673,109 @@ input:focus, select:focus {
     transition: background 0.3s ease;
 }
 
-.save-btn:hover {
-    background: #0043a1;
-}
+    .save-btn:hover {
+        background: #0043a1;
+    }
 
 /* Animation */
 @keyframes fadeIn {
-    from {opacity: 0; transform: translateY(-20px);}
-    to {opacity: 1; transform: translateY(0);}
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* CANCEL BUTTON */
 .cancel-btn {
-  margin-top: 10px;
-  padding: 12px 20px;
-  background: #ccc;
-  border: none;
-  color: #333;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 15px;
-  font-weight: 500;
-  transition: background 0.3s ease;
+    margin-top: 10px;
+    padding: 12px 20px;
+    background: #ccc;
+    border: none;
+    color: #333;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 500;
+    transition: background 0.3s ease;
 }
 
-.cancel-btn:hover {
-  background: #bbb;
-}
+    .cancel-btn:hover {
+        background: #bbb;
+    }
 
 /* Modal button group */
 .modal-actions {
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
 }
 
 
 /* PROFILE IMAGE */
 .profile-img-wrapper {
-  text-align: center;
-  margin-bottom: 20px;
+    text-align: center;
+    margin-bottom: 20px;
 }
 
 .profile-img {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 3px solid #0057b7;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #0057b7;
 }
 
 /* RIGHT DETAILS BAR */
 .details-bar {
-  position: fixed;
-  top: 120px;
-  right: 0;
-  width: 220px;
-  height: calc(100% - 120px);
-  background: #eaeaea;
-  padding: 20px;
-  box-shadow: -2px 0 8px rgba(0,0,0,0.1);
-  font-family: "Segoe UI", Arial, sans-serif;
+    position: fixed;
+    top: 120px;
+    right: 0;
+    width: 220px;
+    height: calc(100% - 120px);
+    background: #eaeaea;
+    padding: 20px;
+    box-shadow: -2px 0 8px rgba(0,0,0,0.1);
+    font-family: "Segoe UI", Arial, sans-serif;
 }
 
-.details-bar h3 {
-  font-size: 18px;
-  margin-bottom: 20px;
-  color: #333;
-  font-weight: 600;
-}
+    .details-bar h3 {
+        font-size: 18px;
+        margin-bottom: 20px;
+        color: #333;
+        font-weight: 600;
+    }
 
-.details-bar ul {
-  list-style: none;
-  padding: 0;
-}
+    .details-bar ul {
+        list-style: none;
+        padding: 0;
+    }
 
-.details-bar ul li {
-  margin-bottom: 15px;
-}
+        .details-bar ul li {
+            margin-bottom: 15px;
+        }
 
-.details-bar ul li a {
-  color: #0057b7;
-  text-decoration: none;
-  font-size: 15px;
-  font-weight: 500;
-  transition: color 0.3s ease;
-}
+            .details-bar ul li a {
+                color: #0057b7;
+                text-decoration: none;
+                font-size: 15px;
+                font-weight: 500;
+                transition: color 0.3s ease;
+            }
 
-.details-bar ul li a:hover {
-  color: #003f8f;
-}
+                .details-bar ul li a:hover {
+                    color: #003f8f;
+                }
 
 /* Adjust profile container */
 .profile-container {
-  margin-left: 240px;
-  margin-right: 240px;
-  padding: 20px;
+    margin-left: 240px;
+    margin-right: 240px;
+    padding: 20px;
 }
 
 .room-card {
@@ -754,12 +786,12 @@ input:focus, select:focus {
     border-radius: 6px;
 }
 
-.room-card.no-rooms {
-    background: #f9f9f9;
-    border: 1px dashed #aaa;
-    text-align: center;
-    color: #555;
-}
+    .room-card.no-rooms {
+        background: #f9f9f9;
+        border: 1px dashed #aaa;
+        text-align: center;
+        color: #555;
+    }
 
 .popup-overlay {
     position: fixed;
@@ -774,9 +806,9 @@ input:focus, select:focus {
     z-index: 2000;
 }
 
-.popup-overlay.active {
-    display: flex;
-}
+    .popup-overlay.active {
+        display: flex;
+    }
 
 .popup-box {
     background: #fff;
@@ -788,15 +820,12 @@ input:focus, select:focus {
     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
 }
 
-.popup-box input[type="file"],
-.popup-box select {
-    width: 100%;
-    margin-bottom: 10px;
-}
+    .popup-box input[type="file"],
+    .popup-box select {
+        width: 100%;
+        margin-bottom: 10px;
+    }
 
 .update-msg {
     margin-top: 10px;
 }
-
-
-
