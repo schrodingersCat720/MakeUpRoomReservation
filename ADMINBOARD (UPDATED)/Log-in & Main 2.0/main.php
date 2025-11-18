@@ -335,6 +335,17 @@ document.querySelectorAll('.campusButton').forEach(btn => {
     });
 });
 
+// Reservation form redirect
+function openReservationForm(roomID, campus, building, date, time) {
+  const params = new URLSearchParams({
+    roomID: roomID,
+    campus: campus,
+    building: building,
+    date: date,   // <-- this is already YYYY-MM-DD
+    time: time
+  });
+  window.location.href = `Reservation Form/form.html?${params.toString()}`;
+}
 // Update Database popup
 const updateBtn = document.getElementById('updateBtn');
 const updatePopup = document.getElementById('updatePopup');
