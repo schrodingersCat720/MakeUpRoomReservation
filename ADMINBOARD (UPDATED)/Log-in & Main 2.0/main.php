@@ -7,28 +7,6 @@ include 'weekly_reset.php';
    AJAX HANDLERS
 ------------------------------*/
 
-// Get buildings for selected campus
-if (isset($_POST['ajax']) && $_POST['ajax'] === 'getBuildings') {
-    $campusID = $_POST['campusID'] ?? null;
-    if (!$campusID || !is_numeric($campusID)) {
-        echo "<option value=''>Select a valid campus</option>";
-        exit;
-    }
-
-    $stmt = $conn->prepare("SELECT BuildingName FROM Buildings WHERE CampusID = ?");
-    $stmt->bind_param("i", $campusID);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    $options = "<option value=''>All buildings</option>";
-    while ($row = $result->fetch_assoc()) {
-        $building = htmlspecialchars($row['BuildingName']);
-        $options .= "<option value='$building'>$building</option>";
-    }
-    echo $options;
-    exit;
-}
-
 // Get available time slots
 if (isset($_POST['ajax']) && $_POST['ajax'] === 'getTimes') {
     $buildingName = $_POST['buildingName'] ?? '';
@@ -59,7 +37,7 @@ if (isset($_POST['ajax']) && $_POST['ajax'] === 'getTimes') {
    FILTER HANDLER
 ------------------------------*/
 $rooms = [];
-$selectedCampus = $_POST['campus'] ?? '';
+$selectedCampus = $_POST['campus'] ?? ''; // campus now comes from tab
 $selectedBuilding = $_POST['building'] ?? '';
 $selectedTime = $_POST['prefTime'] ?? '';
 $selectedDate = $_POST['date'] ?? '';
@@ -103,6 +81,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['ajax'])) {
         $params["values"][] = $selectedDate;
     }
 
+    $query .= " ORDER BY STR_TO_DATE(r.TimeAvailable, '%h:%i %p') ASC";
+
     $stmt = $conn->prepare($query);
     if ($params["types"]) {
         $bind_names[] = $params["types"];
@@ -116,6 +96,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['ajax'])) {
     $stmt->execute();
     $result = $stmt->get_result();
 
+    while ($row = $result->fetch_assoc()) {
+        $rooms[] = $row;
+    }
+} else {
+    $allRoomsQuery = "SELECT r.RoomID, r.RoomName, b.BuildingName, c.CampusName, r.TimeAvailable 
+                      FROM Rooms r
+                      JOIN Buildings b ON r.BuildingID = b.BuildingID
+                      JOIN Campus c ON b.CampusID = c.CampusID
+                      ORDER BY STR_TO_DATE(r.TimeAvailable, '%h:%i %p') ASC";
+    $result = $conn->query($allRoomsQuery);
     while ($row = $result->fetch_assoc()) {
         $rooms[] = $row;
     }
@@ -157,33 +147,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['ajax'])) {
 <div class="content">
     <div class="left-col">
         <form method="POST" class="filter-card" id="filterForm">
-            <label for="campus">Select a Campus:</label>
-            <select name="campus" id="campus">
-                <option value="">All campuses</option>
-                <?php
-                $campusQuery = $conn->query("SELECT CampusID, CampusName FROM Campus");
-                while ($row = $campusQuery->fetch_assoc()) {
-                    $selected = ($selectedCampus == $row['CampusID']) ? 'selected' : '';
-                    echo "<option value='" . htmlspecialchars($row['CampusID']) . "' $selected>" . htmlspecialchars($row['CampusName']) . "</option>";
-                }
-                ?>
-            </select>
-
             <label for="building">Select a Building:</label>
             <select name="building" id="building">
+                <option value="">All buildings</option>
                 <?php
                 if ($selectedCampus) {
                     $stmt = $conn->prepare("SELECT BuildingName FROM Buildings WHERE CampusID = ?");
                     $stmt->bind_param("i", $selectedCampus);
                     $stmt->execute();
                     $result = $stmt->get_result();
-                    echo "<option value=''>All buildings</option>";
                     while ($row = $result->fetch_assoc()) {
                         $building = htmlspecialchars($row['BuildingName']);
                         $selected = ($selectedBuilding === $building) ? 'selected' : '';
                         echo "<option value='$building' $selected>$building</option>";
                     }
-                } else { echo "<option value=''>Select a campus first</option>"; }
+                }
                 ?>
             </select>
 
@@ -198,7 +176,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['ajax'])) {
             <button type="submit" class="find-btn">Find</button>
         </form>
 
-        <!-- Update Database button -->
         <button class="find-btn" id="updateBtn">Update Database</button>
     </div>
 
@@ -278,25 +255,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['ajax'])) {
 <div class="overlay" id="overlay"></div>
 
 <script>
-const campusSelect = document.getElementById('campus');
 const buildingSelect = document.getElementById('building');
 const timeSelect = document.getElementById('prefTime');
 const dateInput = document.getElementById('date');
-
-// Load buildings when campus changes
-campusSelect.addEventListener('change', () => {
-    const campusID = campusSelect.value;
-    buildingSelect.innerHTML = "<option>Loading...</option>";
-    timeSelect.innerHTML = "<option value=''>All times</option>";
-
-    fetch('main.php', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-        body: 'ajax=getBuildings&campusID=' + encodeURIComponent(campusID)
-    })
-    .then(res => res.text())
-    .then(data => { buildingSelect.innerHTML = data; });
-});
+const filterForm = document.getElementById('filterForm');
 
 // Load time slots when building + date are selected
 function loadTimeSlots() {
@@ -315,6 +277,28 @@ function loadTimeSlots() {
 }
 buildingSelect.addEventListener('change', loadTimeSlots);
 dateInput.addEventListener('change', loadTimeSlots);
+
+// Campus tabs (preserve design)
+document.querySelectorAll('.campusButton').forEach(btn => {
+    btn.addEventListener('click', () => {
+        let campusId = 0;
+        const text = btn.textContent.trim();
+        if(text === 'MAIN') campusId = 1;
+        else if(text === 'ANNEX') campusId = 2;
+        else if(text === 'CPAG') campusId = 3;
+
+        // Create or update hidden input for campus
+        let campusInput = document.querySelector('input[name="campus"]');
+        if(!campusInput){
+            campusInput = document.createElement('input');
+            campusInput.type = 'hidden';
+            campusInput.name = 'campus';
+            filterForm.appendChild(campusInput);
+        }
+        campusInput.value = campusId;
+        filterForm.submit();
+    });
+});
 
 // Update Database popup
 const updateBtn = document.getElementById('updateBtn');

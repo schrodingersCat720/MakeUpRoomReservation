@@ -172,6 +172,17 @@ nav {
 		width: 80%;
 	}
 
+ /* PROFILE ICON HOVER ANIMATION */
+.profIcon {
+    width: 80%;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.profIcon:hover {
+    transform: scale(1.1); /* Slightly enlarge on hover */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Optional subtle shadow */
+}
+
 /* MAIN CONTENT */
 .back2Dash {
 	display: flex;
@@ -734,5 +745,58 @@ input:focus, select:focus {
   margin-right: 240px;
   padding: 20px;
 }
+
+.room-card {
+    background: #fff;
+    border: 1px solid #ccc;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 6px;
+}
+
+.room-card.no-rooms {
+    background: #f9f9f9;
+    border: 1px dashed #aaa;
+    text-align: center;
+    color: #555;
+}
+
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+
+.popup-overlay.active {
+    display: flex;
+}
+
+.popup-box {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    width: 360px;
+    max-width: 90%;
+    text-align: center;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+}
+
+.popup-box input[type="file"],
+.popup-box select {
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.update-msg {
+    margin-top: 10px;
+}
+
 
 
