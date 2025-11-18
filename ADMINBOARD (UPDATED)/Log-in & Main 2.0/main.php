@@ -92,7 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['ajax'])) {
         $params["values"][] = $selectedTime;
     }
     if (!empty($selectedDate)) {
-        // Only show rooms available on that weekday
+        // Only show rooms available on that weekday (DaysAvailable stored as comma-separated)
         $query .= " AND FIND_IN_SET(?, r.DaysAvailable) > 0";
         $params["types"] .= "s";
         $params["values"][] = $dayOfWeek;
@@ -108,7 +108,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['ajax'])) {
 
     $stmt = $conn->prepare($query);
     if ($params["types"]) {
-        $stmt->bind_param($params["types"], ...$params["values"]);
+        // bind_param requires references in PHP <= 7.4; we will use a dynamic call
+        $bind_names[] = $params["types"];
+        for ($i=0; $i<count($params["values"]); $i++) {
+            $bind_name = 'bind' . $i;
+            $$bind_name = $params["values"][$i];
+            $bind_names[] = &$$bind_name;
+        }
+        call_user_func_array([$stmt, 'bind_param'], $bind_names);
     }
     $stmt->execute();
     $result = $stmt->get_result();
@@ -138,6 +145,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['ajax'])) {
             text-align: center;
             color: #555;
         }
+
+        /* popup styles */
+        .popup-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            display:none;
+            justify-content:center;
+            align-items:center;
+            z-index: 2000;
+        }
+        .popup-overlay.active { display:flex; }
+        .popup-box {
+            background:#fff;
+            padding:20px;
+            border-radius:8px;
+            width:360px;
+            max-width:90%;
+            text-align:center;
+            box-shadow:0 6px 18px rgba(0,0,0,0.2);
+        }
+        .popup-box input[type="file"] { width:100%; }
+        .update-msg { margin-top:10px; }
     </style>
 </head>
 <body>
@@ -149,10 +180,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['ajax'])) {
         <p>Make-Up Class Room Reservation</p>
       </div>
     </div>
-	<div class="greetings">
-		<div><h4>Hello, PLV Admin</h4></div>
-		<div><a href="admin_profile.html"><img src="image/profIcon.png" alt="profileIcon" class="profIcon"></a></div>
-	</div>
+    <div class="greetings">
+        <div><h4>Hello, PLV Admin</h4></div>
+        <div><a href="admin_profile.html"><img src="image/profIcon.png" alt="profileIcon" class="profIcon"></a></div>
+    </div>
     <div class="menu-icon" id="menuToggle">☰</div>
 </nav>
 
@@ -206,21 +237,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['ajax'])) {
 
             <button type="submit" class="find-btn">Find</button>
         </form>
-		<button class="find-btn">Update Rooms</button>
+
+        <!-- Update Rooms button that opens popup -->
+        <button class="find-btn" id="updateBtn">Update Rooms</button>
     </div>
 
     <div class="divider"></div>
 
     <!-- Results -->
     <div class="right-col">
-		<div class="dashCampus">
-			<button class="campusButton" id="lButton">MAIN</button>
-			<button class="campusButton">ANNEX</button>
-			<button class="campusButton" id="rButton">CPAG</button>
-		</div>
+        <div class="dashCampus">
+            <button class="campusButton" id="lButton">MAIN</button>
+            <button class="campusButton">ANNEX</button>
+            <button class="campusButton" id="rButton">CPAG</button>
+        </div>
         <div class="right-outer">
             <div class="right-inner">
-                <h2>Available Rooms for [Date] at [Time] for [Duration]:</h2>
+                <h2>Available Rooms for <?= $selectedDate ? htmlspecialchars($selectedDate) : '[Date]' ?> at <?= $selectedTime ? htmlspecialchars($selectedTime) : '[Time]' ?>:</h2>
                 <div id="roomList">
                     <?php if (!empty($rooms)): ?>
                         <?php foreach ($rooms as $room): ?>
@@ -229,7 +262,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['ajax'])) {
                                     <strong><?= htmlspecialchars($room["RoomName"]) ?></strong>
                                     <small>
                                         <?= htmlspecialchars($room["CampusName"]) ?> - <?= htmlspecialchars($room["BuildingName"]) ?><br>
-                                        <?= htmlspecialchars(date('l', strtotime($selectedDate))) ?><br>
+                                        <?= htmlspecialchars($selectedDate ? date('l', strtotime($selectedDate)) : '') ?><br>
                                         <?= htmlspecialchars($room["TimeAvailable"]) ?>
                                     </small>
                                 </div>
@@ -238,7 +271,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['ajax'])) {
                                   onclick="openReservationForm(
                                     '<?= $room['RoomID'] ?>',
                                     '<?= htmlspecialchars($room['CampusName']) ?>',
-                                                                        '<?= htmlspecialchars($room['BuildingName']) ?>',
+                                    '<?= htmlspecialchars($room['BuildingName']) ?>',
                                     '<?= htmlspecialchars($selectedDate) ?>',
                                     '<?= htmlspecialchars($room['TimeAvailable']) ?>'
                                   )"
@@ -259,6 +292,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['ajax'])) {
             </div>
         </div>
     </div>
+</div>
+
+<!-- UPDATE ROOMS POPUP -->
+<div id="updatePopup" class="popup-overlay" aria-hidden="true">
+  <div class="popup-box" role="dialog" aria-modal="true" aria-labelledby="updateTitle">
+      <h3 id="updateTitle">Update Rooms</h3>
+      <p>Upload an Excel (.xlsx) file to update the rooms database. The sheet should have a header row:</p>
+      <p><small><em>RoomID | RoomName | BuildingID | TimeAvailable | DaysAvailable | DaysOccupied</em></small></p>
+
+      <form id="uploadForm" enctype="multipart/form-data" method="post" novalidate>
+          <input type="file" name="file" accept=".xlsx" required>
+          <br><br>
+          <button type="submit" class="find-btn">Upload & Update</button>
+      </form>
+
+      <button onclick="closePopup()" class="close-btn">Close</button>
+
+      <div id="updateMessage" class="update-msg" aria-live="polite"></div>
+  </div>
 </div>
 
 <!-- OVERLAY AND SIDE MENU -->
@@ -366,6 +418,44 @@ function openReservationForm(roomID, campus, building, date, time) {
   window.location.href = `Reservation Form/form.html?${params.toString()}`;
 }
 
+/* ---------------------
+   Update Rooms popup + upload
+   ---------------------*/
+const updateBtn = document.getElementById('updateBtn');
+const updatePopup = document.getElementById('updatePopup');
+const uploadForm = document.getElementById('uploadForm');
+const updateMessage = document.getElementById('updateMessage');
+
+updateBtn.addEventListener('click', () => {
+    updatePopup.classList.add('active');
+    updatePopup.setAttribute('aria-hidden', 'false');
+    updateMessage.innerHTML = '';
+});
+
+function closePopup() {
+    updatePopup.classList.remove('active');
+    updatePopup.setAttribute('aria-hidden', 'true');
+}
+
+uploadForm.addEventListener('submit', function (e) {
+    e.preventDefault();
+    updateMessage.innerHTML = 'Uploading...';
+
+    const formData = new FormData(this);
+
+    fetch("update_rooms.php", {
+        method: "POST",
+        body: formData
+    })
+    .then(res => res.text())
+    .then(data => {
+        updateMessage.innerHTML = data;
+    })
+    .catch(err => {
+        console.error(err);
+        updateMessage.innerHTML = "<p style='color:red;'>Upload failed. Check server logs.</p>";
+    });
+});
 </script>
 </body>
 </html>
