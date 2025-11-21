@@ -129,6 +129,18 @@ CREATE TABLE `reservations` (
 -- Table structure for table `rooms`
 --
 
+-- Table: users
+CREATE TABLE `users` (
+  `user_id` INT AUTO_INCREMENT PRIMARY KEY,
+  `email` VARCHAR(100) NOT NULL UNIQUE,
+  `password_hash` VARCHAR(255) NOT NULL,
+  `station` VARCHAR(100) DEFAULT NULL,
+  `position` VARCHAR(100) DEFAULT NULL,
+  `task` VARCHAR(100) DEFAULT NULL,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
 CREATE TABLE `rooms` (
   `RoomID` int(11) NOT NULL,
   `RoomName` varchar(100) NOT NULL,

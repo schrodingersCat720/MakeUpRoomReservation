@@ -120,4 +120,47 @@ signupForm.addEventListener('submit', (e) => {
         e.preventDefault(); // Stop form submission if invalid
     }
     // If valid, the form posts to signup.php
+
+    
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+    // Toggle between login and signup forms
+    const loginForm = document.getElementById("loginForm");
+    const signupForm = document.getElementById("signupForm");
+    const toSignup = document.getElementById("switchToSignup");
+    const toLogin = document.getElementById("switchToLogin");
+  
+    if (toSignup) {
+      toSignup.addEventListener("click", (e) => {
+        e.preventDefault();
+        loginForm.style.display = "none";
+        signupForm.style.display = "block";
+      });
+    }
+  
+    if (toLogin) {
+      toLogin.addEventListener("click", (e) => {
+        e.preventDefault();
+        signupForm.style.display = "none";
+        loginForm.style.display = "block";
+      });
+    }
+  
+    // Password visibility toggles (eye/eye-slash)
+    document.querySelectorAll(".togglePassword").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const targetId = btn.getAttribute("data-target");
+        const input = document.getElementById(targetId);
+        if (!input) return;
+  
+        const isHidden = input.type === "password";
+        input.type = isHidden ? "text" : "password";
+  
+        // Update icon
+        btn.textContent = isHidden ? "︶" : "👁";
+        btn.setAttribute("aria-label", isHidden ? "Hide password" : "Show password");
+      });
+    });
+  });
+  

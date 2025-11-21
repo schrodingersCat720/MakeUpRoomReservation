@@ -1,13 +1,33 @@
 <?php 
+session_start();
 require_once __DIR__ . '/auth_check.php';
 include 'connect.php';
 include 'weekly_reset.php';
 
 /* -----------------------------
+   Fetch logged-in user info
+------------------------------*/
+$loggedInUser = 'Admin'; // fallback
+if (isset($_SESSION['user_id'])) {
+    $stmt = $conn->prepare("SELECT email, station, position FROM users WHERE user_id = ?");
+    $stmt->bind_param("i", $_SESSION['user_id']);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    if ($row = $result->fetch_assoc()) {
+        // You can use station or position instead of email if preferred
+        $loggedInUser = $row['email'];
+    }
+}
+
+// Time-based greeting
+$hour = date('H');
+if ($hour < 12) $greeting = "Good morning";
+elseif ($hour < 18) $greeting = "Good afternoon";
+else $greeting = "Good evening";
+
+/* -----------------------------
    AJAX HANDLERS
 ------------------------------*/
-
-// Get available time slots
 if (isset($_POST['ajax']) && $_POST['ajax'] === 'getTimes') {
     $buildingName = $_POST['buildingName'] ?? '';
     $selectedDate = $_POST['selectedDate'] ?? '';
@@ -37,7 +57,7 @@ if (isset($_POST['ajax']) && $_POST['ajax'] === 'getTimes') {
    FILTER HANDLER
 ------------------------------*/
 $rooms = [];
-$selectedCampus = $_POST['campus'] ?? ''; // campus now comes from tab
+$selectedCampus = $_POST['campus'] ?? '';
 $selectedBuilding = $_POST['building'] ?? '';
 $selectedTime = $_POST['prefTime'] ?? '';
 $selectedDate = $_POST['date'] ?? '';
@@ -117,7 +137,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['ajax'])) {
     <meta charset="utf-8" />
     <title>Room Reservation</title>
     <link rel="stylesheet" href="admin.css" />
-
 </head>
 <body>
 <nav>
@@ -129,8 +148,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['ajax'])) {
       </div>
     </div>
     <div class="greetings">
-        <div><h4>Hello, PLV Admin</h4></div>
-        <div><a href="admin_profile.html"><img src="image/profIcon.png" alt="profileIcon" class="profIcon"></a></div>
+        <div><h4><?= $greeting ?>, <?= htmlspecialchars($loggedInUser) ?></h4></div>
+        <div><a href="admin_profile.php"><img src="image/profIcon.png" alt="profileIcon" class="profIcon"></a></div>
     </div>
     <div class="menu-icon" id="menuToggle">☰</div>
 </nav>
@@ -249,134 +268,129 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['ajax'])) {
   <h3>MENU</h3>
 
   <button class="Transactionbtn">Transaction Logs</button>
-
-
   <hr>
-
   <button class="menu-item">Log-out Admin</button>
 </div>
 
 <script>
  // Side menu
  const menuToggle = document.getElementById('menuToggle');
-  const sideMenu = document.getElementById('sideMenu');
-  const overlay = document.getElementById('overlay');
-  const backBtn = document.getElementById('backBtn');
+ const sideMenu = document.getElementById('sideMenu');
+ const overlay = document.getElementById('overlay');
+ const backBtn = document.getElementById('backBtn');
 
-  menuToggle.addEventListener('click', () => {
-    sideMenu.classList.add('active');
-    overlay.classList.add('active');
-  });
+ menuToggle.addEventListener('click', () => {
+   sideMenu.classList.add('active');
+   overlay.classList.add('active');
+ });
 
-  backBtn.addEventListener('click', closeMenu);
-  overlay.addEventListener('click', closeMenu);
+ backBtn.addEventListener('click', closeMenu);
+ overlay.addEventListener('click', closeMenu);
 
-  function closeMenu() {
-    sideMenu.classList.remove('active');
-    overlay.classList.remove('active');
-  }
+ function closeMenu() {
+   sideMenu.classList.remove('active');
+   overlay.classList.remove('active');
+ }
 
-  // Logout
-  document.querySelector('.menu-item').addEventListener('click', () => {
-    if (confirm('Are you sure you want to log out?')) {
-      window.location.href = 'index.php';
-    }
-  });
+ // Logout
+ document.querySelector('.menu-item').addEventListener('click', () => {
+   if (confirm('Are you sure you want to log out?')) {
+     window.location.href = 'index.php';
+   }
+ });
 
-  // Transaction logs
-  document.querySelector('.Transactionbtn').addEventListener('click', () => {
-    window.location.href = 'transaction_logs.php';
-  });
+ // Transaction logs
+ document.querySelector('.Transactionbtn').addEventListener('click', () => {
+   window.location.href = 'transaction_logs.php';
+ });
 
-  
+ const buildingSelect = document.getElementById('building');
+ const timeSelect = document.getElementById('prefTime');
+ const dateInput = document.getElementById('date');
+ const filterForm = document.getElementById('filterForm');
 
-const buildingSelect = document.getElementById('building');
-const timeSelect = document.getElementById('prefTime');
-const dateInput = document.getElementById('date');
-const filterForm = document.getElementById('filterForm');
+ // Load time slots when building + date are selected
+ function loadTimeSlots() {
+     const buildingName = buildingSelect.value;
+     const selectedDate = dateInput.value;
+     if (!buildingName || !selectedDate) { timeSelect.innerHTML = "<option value=''>All times</option>"; return; }
+     timeSelect.innerHTML = "<option>Loading...</option>";
+     fetch('main.php', {
+         method: 'POST',
+         headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+         body: 'ajax=getTimes&buildingName=' + encodeURIComponent(buildingName) +
+               '&selectedDate=' + encodeURIComponent(selectedDate)
+     })
+     .then(res => res.text())
+     .then(data => { timeSelect.innerHTML = data; });
+ }
+ buildingSelect.addEventListener('change', loadTimeSlots);
+ dateInput.addEventListener('change', loadTimeSlots);
 
-// Load time slots when building + date are selected
-function loadTimeSlots() {
-    const buildingName = buildingSelect.value;
-    const selectedDate = dateInput.value;
-    if (!buildingName || !selectedDate) { timeSelect.innerHTML = "<option value=''>All times</option>"; return; }
-    timeSelect.innerHTML = "<option>Loading...</option>";
-    fetch('main.php', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-        body: 'ajax=getTimes&buildingName=' + encodeURIComponent(buildingName) +
-              '&selectedDate=' + encodeURIComponent(selectedDate)
-    })
-    .then(res => res.text())
-    .then(data => { timeSelect.innerHTML = data; });
-}
-buildingSelect.addEventListener('change', loadTimeSlots);
-dateInput.addEventListener('change', loadTimeSlots);
+ // Campus tabs
+ document.querySelectorAll('.campusButton').forEach(btn => {
+     btn.addEventListener('click', () => {
+         let campusId = 0;
+         const text = btn.textContent.trim();
+         if(text === 'MAIN') campusId = 1;
+         else if(text === 'ANNEX') campusId = 2;
+         else if(text === 'CPAG') campusId = 3;
 
-// Campus tabs (preserve design)
-document.querySelectorAll('.campusButton').forEach(btn => {
-    btn.addEventListener('click', () => {
-        let campusId = 0;
-        const text = btn.textContent.trim();
-        if(text === 'MAIN') campusId = 1;
-        else if(text === 'ANNEX') campusId = 2;
-        else if(text === 'CPAG') campusId = 3;
+         let campusInput = document.querySelector('input[name="campus"]');
+         if(!campusInput){
+             campusInput = document.createElement('input');
+             campusInput.type = 'hidden';
+             campusInput.name = 'campus';
+             filterForm.appendChild(campusInput);
+         }
+         campusInput.value = campusId;
+         filterForm.submit();
+     });
+ });
 
-        // Create or update hidden input for campus
-        let campusInput = document.querySelector('input[name="campus"]');
-        if(!campusInput){
-            campusInput = document.createElement('input');
-            campusInput.type = 'hidden';
-            campusInput.name = 'campus';
-            filterForm.appendChild(campusInput);
-        }
-        campusInput.value = campusId;
-        filterForm.submit();
-    });
-});
+ // Reservation form redirect
+ function openReservationForm(roomID, campus, building, date, time) {
+   const params = new URLSearchParams({
+     roomID: roomID,
+     campus: campus,
+     building: building,
+     date: date,
+     time: time
+   });
+   window.location.href = `Reservation Form/form.html?${params.toString()}`;
+ }
 
-// Reservation form redirect
-function openReservationForm(roomID, campus, building, date, time) {
-  const params = new URLSearchParams({
-    roomID: roomID,
-    campus: campus,
-    building: building,
-    date: date,   // <-- this is already YYYY-MM-DD
-    time: time
-  });
-  window.location.href = `Reservation Form/form.html?${params.toString()}`;
-}
-// Update Database popup
-const updateBtn = document.getElementById('updateBtn');
-const updatePopup = document.getElementById('updatePopup');
-const uploadForm = document.getElementById('uploadForm');
-const updateMessage = document.getElementById('updateMessage');
+ // Update Database popup
+ const updateBtn = document.getElementById('updateBtn');
+ const updatePopup = document.getElementById('updatePopup');
+ const uploadForm = document.getElementById('uploadForm');
+ const updateMessage = document.getElementById('updateMessage');
 
-updateBtn.addEventListener('click', () => {
-    updatePopup.classList.add('active');
-    updatePopup.setAttribute('aria-hidden', 'false');
-    updateMessage.innerHTML = '';
-});
+ updateBtn.addEventListener('click', () => {
+     updatePopup.classList.add('active');
+     updatePopup.setAttribute('aria-hidden', 'false');
+     updateMessage.innerHTML = '';
+ });
 
-function closePopup() {
-    updatePopup.classList.remove('active');
-    updatePopup.setAttribute('aria-hidden', 'true');
-}
+ function closePopup() {
+     updatePopup.classList.remove('active');
+     updatePopup.setAttribute('aria-hidden', 'true');
+ }
 
-uploadForm.addEventListener('submit', function (e) {
-    e.preventDefault();
-    updateMessage.innerHTML = 'Uploading...';
+ uploadForm.addEventListener('submit', function (e) {
+     e.preventDefault();
+     updateMessage.innerHTML = 'Uploading...';
 
-    const formData = new FormData(this);
-    const selectedTable = document.getElementById('tableSelect').value;
-    if (!selectedTable) { updateMessage.innerHTML = "<p style='color:red;'>Please select a table.</p>"; return; }
-    formData.append('table', selectedTable);
+     const formData = new FormData(this);
+     const selectedTable = document.getElementById('tableSelect').value;
+     if (!selectedTable) { updateMessage.innerHTML = "<p style='color:red;'>Please select a table.</p>"; return; }
+     formData.append('table', selectedTable);
 
-    fetch("update_rooms.php", { method: "POST", body: formData })
-    .then(res => res.text())
-    .then(data => { updateMessage.innerHTML = data; })
-    .catch(err => { updateMessage.innerHTML = "<p style='color:red;'>Upload failed.</p>"; });
-});
+     fetch("update_rooms.php", { method: "POST", body: formData })
+     .then(res => res.text())
+     .then(data => { updateMessage.innerHTML = data; })
+     .catch(err => { updateMessage.innerHTML = "<p style='color:red;'>Upload failed.</p>"; });
+ });
 </script>
 </body>
 </html>
