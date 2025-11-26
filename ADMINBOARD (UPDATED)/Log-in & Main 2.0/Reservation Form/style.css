@@ -145,6 +145,11 @@ input {
   font-family: 'Garet-Book';
 }
 
+input[readonly] {
+	background-color: #e0e0e0;
+	cursor: not-allowed;
+}
+
 .submit-btn {
   margin-top: 20px;
   text-align: right;
