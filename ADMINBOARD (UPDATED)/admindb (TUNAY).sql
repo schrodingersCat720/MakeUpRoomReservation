@@ -121,6 +121,7 @@ CREATE TABLE `reservations` (
   `Status` enum('active','expired') DEFAULT 'active',
   `CreatedDate` timestamp NOT NULL DEFAULT current_timestamp(),
   `RoomID` int(11) NOT NULL,
+  `Room` varchar(100) NOT NULL,
   `PdfPath` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
