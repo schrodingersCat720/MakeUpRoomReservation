@@ -1,5 +1,6 @@
 <?php
-error_reporting(E_ERROR | E_PARSE);
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
 header('Content-Type: application/json');
 
 require 'connect.php';
@@ -13,16 +14,18 @@ $subject    = $_POST['subject'] ?? '';
 $course     = $_POST['course'] ?? '';
 $campus     = $_POST['campus'] ?? '';
 $building   = $_POST['building'] ?? '';
+$room       = $_POST['room'] ?? '';   // ✅ matches DB column `Room`
 $time       = $_POST['time'] ?? '';
 $roomID     = $_POST['roomID'] ?? null;
 
-// Normalize date to YYYY-MM-DD
+// Normalize date
 $date = '';
 if (!empty($_POST['date'])) {
   $date = date('Y-m-d', strtotime($_POST['date']));
 }
 
-if (!$instructor || !$subject || !$course || !$campus || !$building || !$date || !$time || !$roomID) {
+// Validate required fields
+if (!$instructor || !$subject || !$course || !$campus || !$building || !$room || !$date || !$time || !$roomID) {
   echo json_encode(['success' => false, 'message' => 'Missing required fields']);
   exit;
 }
@@ -41,13 +44,24 @@ if ($count > 0) {
   exit;
 }
 
-// Insert reservation
+// ✅ Insert reservation using correct column name `Room`
 $stmt = $conn->prepare("
   INSERT INTO Reservations 
-  (InstructorName, SubjectCode, CourseSection, Campus, Building, Date, Time, RoomID, Status) 
-  VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'active')
+  (InstructorName, SubjectCode, CourseSection, Campus, Building, Room, Date, Time, RoomID, Status) 
+  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'active')
 ");
-$stmt->bind_param("sssssssi", $instructor, $subject, $course, $campus, $building, $date, $time, $roomID);
+
+$stmt->bind_param("ssssssssi", 
+    $instructor, 
+    $subject, 
+    $course, 
+    $campus, 
+    $building, 
+    $room, 
+    $date, 
+    $time, 
+    $roomID
+);
 
 if (!$stmt->execute()) {
   echo json_encode(['success' => false, 'message' => 'Database error: ' . $stmt->error]);
@@ -74,6 +88,7 @@ $html = "
 <tr><td><b>Course:</b></td><td>$course</td></tr>
 <tr><td><b>Campus:</b></td><td>$campus</td></tr>
 <tr><td><b>Building:</b></td><td>$building</td></tr>
+<tr><td><b>Room:</b></td><td>$room</td></tr>
 <tr><td><b>Date:</b></td><td>$date</td></tr>
 <tr><td><b>Time:</b></td><td>$time</td></tr>
 </table>

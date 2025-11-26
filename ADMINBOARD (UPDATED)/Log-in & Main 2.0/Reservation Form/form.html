@@ -53,6 +53,10 @@
             <label for="building">Building</label>
             <input type="text" id="building" name="building" readonly  />
           </div>
+		  <div class="form-group">
+            <label for="room">Room</label>
+            <input type="text" id="room" name="room" readonly  />
+          </div>
           <div class="form-group">
             <label for="date">Date</label>
             <input type="date" id="date" name="date" readonly  />
@@ -85,12 +89,14 @@ document.addEventListener("DOMContentLoaded", () => {
   const roomID = params.get("roomID");
   const campus = params.get("campus");
   const building = params.get("building");
+  const room = params.get("room");
   const date = params.get("date");
   const time = params.get("time");
 
   if (roomID) document.getElementById("roomID").value = roomID;
   if (campus) document.getElementById("campus").value = campus;
   if (building) document.getElementById("building").value = building;
+  if (room) document.getElementById("room").value = room;
   if (date) document.getElementById("date").value = date;
   if (time) document.getElementById("time").value = time;
 });

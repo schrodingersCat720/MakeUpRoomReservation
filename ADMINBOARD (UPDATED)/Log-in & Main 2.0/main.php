@@ -218,6 +218,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['ajax'])) {
                                     '<?= $room['RoomID'] ?>',
                                     '<?= htmlspecialchars($room['CampusName']) ?>',
                                     '<?= htmlspecialchars($room['BuildingName']) ?>',
+									'<?= htmlspecialchars($room['RoomName']) ?>',
                                     '<?= htmlspecialchars($selectedDate) ?>',
                                     '<?= htmlspecialchars($room['TimeAvailable']) ?>'
                                   )"
@@ -349,11 +350,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['ajax'])) {
  });
 
  // Reservation form redirect
- function openReservationForm(roomID, campus, building, date, time) {
+ function openReservationForm(roomID, campus, building, roomName, date, time) {
    const params = new URLSearchParams({
      roomID: roomID,
      campus: campus,
      building: building,
+	 room: roomName,
      date: date,
      time: time
    });
