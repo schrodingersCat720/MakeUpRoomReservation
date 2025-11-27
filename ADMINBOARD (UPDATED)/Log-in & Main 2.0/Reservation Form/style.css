@@ -145,6 +145,11 @@ input {
   font-family: 'Garet-Book';
 }
 
+.readOnlyField {
+	border: none;
+	pointer-events: none;
+}
+
 .submit-btn {
   margin-top: 20px;
   text-align: right;
