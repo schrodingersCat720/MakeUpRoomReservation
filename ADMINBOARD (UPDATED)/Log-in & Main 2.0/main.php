@@ -1,4 +1,4 @@
-<?php 
+<?php  
 session_start();
 require_once __DIR__ . '/auth_check.php';
 include 'connect.php';
@@ -14,7 +14,6 @@ if (isset($_SESSION['user_id'])) {
     $stmt->execute();
     $result = $stmt->get_result();
     if ($row = $result->fetch_assoc()) {
-        // You can use station or position instead of email if preferred
         $loggedInUser = $row['email'];
     }
 }
@@ -139,6 +138,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['ajax'])) {
     <link rel="stylesheet" href="admin.css" />
 </head>
 <body>
+
 <nav>
     <div class="nav-left">
       <img src="plv_logo.png" alt="PLV Logo">
@@ -156,6 +156,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['ajax'])) {
 
 <div class="content">
     <div class="left-col">
+
+        <!-- FILTER FORM -->
         <form method="POST" class="filter-card" id="filterForm">
             <label for="building">Select a Building:</label>
             <select name="building" id="building">
@@ -197,9 +199,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['ajax'])) {
             <button class="campusButton">ANNEX</button>
             <button class="campusButton" id="rButton">CPAG</button>
         </div>
+
         <div class="right-outer">
             <div class="right-inner">
                 <h2>Available Rooms for <?= $selectedDate ? htmlspecialchars($selectedDate) : '[Date]' ?> at <?= $selectedTime ? htmlspecialchars($selectedTime) : '[Time]' ?>:</h2>
+
                 <div id="roomList">
                     <?php if (!empty($rooms)): ?>
                         <?php foreach ($rooms as $room): ?>
@@ -218,7 +222,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['ajax'])) {
                                     '<?= $room['RoomID'] ?>',
                                     '<?= htmlspecialchars($room['CampusName']) ?>',
                                     '<?= htmlspecialchars($room['BuildingName']) ?>',
-									'<?= htmlspecialchars($room['RoomName']) ?>',
+                                    '<?= htmlspecialchars($room['RoomName']) ?>',
                                     '<?= htmlspecialchars($selectedDate) ?>',
                                     '<?= htmlspecialchars($room['TimeAvailable']) ?>'
                                   )"
@@ -234,16 +238,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['ajax'])) {
                         </div>
                     <?php endif; ?>
                 </div>
+
             </div>
         </div>
     </div>
 </div>
 
-<!-- UPDATE DATABASE POPUP -->
+<!-- UPDATE POPUP -->
 <div id="updatePopup" class="popup-overlay" aria-hidden="true">
   <div class="popup-box" role="dialog" aria-modal="true" aria-labelledby="updateTitle">
       <h3 id="updateTitle">Update Database</h3>
       <p>Upload an Excel (.xlsx) file to update the database. Choose the table first:</p>
+
+      <!-- DOWNLOAD TEMPLATE BUTTON -->
+      <button class="find-btn" onclick="downloadTemplate()">
+          Download Excel Template
+      </button>
+      <br><br>
 
       <form id="uploadForm" enctype="multipart/form-data" method="post" novalidate>
           <label for="tableSelect">Select Table:</label>
@@ -274,125 +285,140 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['ajax'])) {
 </div>
 
 <script>
- // Side menu
- const menuToggle = document.getElementById('menuToggle');
- const sideMenu = document.getElementById('sideMenu');
- const overlay = document.getElementById('overlay');
- const backBtn = document.getElementById('backBtn');
+function downloadTemplate() {
+    const table = document.getElementById("tableSelect").value;
+    if (!table) {
+        alert("Please select a table first.");
+        return;
+    }
+    window.location.href = "download_template.php?table=" + table;
+}
 
- menuToggle.addEventListener('click', () => {
+// Side menu
+const menuToggle = document.getElementById('menuToggle');
+const sideMenu = document.getElementById('sideMenu');
+const overlay = document.getElementById('overlay');
+const backBtn = document.getElementById('backBtn');
+
+menuToggle.addEventListener('click', () => {
    sideMenu.classList.add('active');
    overlay.classList.add('active');
- });
+});
 
- backBtn.addEventListener('click', closeMenu);
- overlay.addEventListener('click', closeMenu);
+backBtn.addEventListener('click', closeMenu);
+overlay.addEventListener('click', closeMenu);
 
- function closeMenu() {
+function closeMenu() {
    sideMenu.classList.remove('active');
    overlay.classList.remove('active');
- }
+}
 
- // Logout
- document.querySelector('.menu-item').addEventListener('click', () => {
+// Logout
+document.querySelector('.menu-item').addEventListener('click', () => {
    if (confirm('Are you sure you want to log out?')) {
      window.location.href = 'index.php';
    }
- });
+});
 
- // Transaction logs
- document.querySelector('.Transactionbtn').addEventListener('click', () => {
+// Transaction logs
+document.querySelector('.Transactionbtn').addEventListener('click', () => {
    window.location.href = 'transaction_logs.php';
- });
+});
 
- const buildingSelect = document.getElementById('building');
- const timeSelect = document.getElementById('prefTime');
- const dateInput = document.getElementById('date');
- const filterForm = document.getElementById('filterForm');
+// Load time slots
+const buildingSelect = document.getElementById('building');
+const timeSelect = document.getElementById('prefTime');
+const dateInput = document.getElementById('date');
+const filterForm = document.getElementById('filterForm');
 
- // Load time slots when building + date are selected
- function loadTimeSlots() {
-     const buildingName = buildingSelect.value;
-     const selectedDate = dateInput.value;
-     if (!buildingName || !selectedDate) { timeSelect.innerHTML = "<option value=''>All times</option>"; return; }
-     timeSelect.innerHTML = "<option>Loading...</option>";
-     fetch('main.php', {
-         method: 'POST',
-         headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-         body: 'ajax=getTimes&buildingName=' + encodeURIComponent(buildingName) +
-               '&selectedDate=' + encodeURIComponent(selectedDate)
-     })
-     .then(res => res.text())
-     .then(data => { timeSelect.innerHTML = data; });
- }
- buildingSelect.addEventListener('change', loadTimeSlots);
- dateInput.addEventListener('change', loadTimeSlots);
+function loadTimeSlots() {
+    const buildingName = buildingSelect.value;
+    const selectedDate = dateInput.value;
+    if (!buildingName || !selectedDate) {
+        timeSelect.innerHTML = "<option value=''>All times</option>";
+        return;
+    }
+    timeSelect.innerHTML = "<option>Loading...</option>";
+    fetch('main.php', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: 'ajax=getTimes&buildingName=' + encodeURIComponent(buildingName) +
+              '&selectedDate=' + encodeURIComponent(selectedDate)
+    })
+    .then(res => res.text())
+    .then(data => { timeSelect.innerHTML = data; });
+}
+buildingSelect.addEventListener('change', loadTimeSlots);
+dateInput.addEventListener('change', loadTimeSlots);
 
- // Campus tabs
- document.querySelectorAll('.campusButton').forEach(btn => {
-     btn.addEventListener('click', () => {
-         let campusId = 0;
-         const text = btn.textContent.trim();
-         if(text === 'MAIN') campusId = 1;
-         else if(text === 'ANNEX') campusId = 2;
-         else if(text === 'CPAG') campusId = 3;
+// Campus tabs
+document.querySelectorAll('.campusButton').forEach(btn => {
+    btn.addEventListener('click', () => {
+        let campusId = 0;
+        const text = btn.textContent.trim();
+        if(text === 'MAIN') campusId = 1;
+        else if(text === 'ANNEX') campusId = 2;
+        else if(text === 'CPAG') campusId = 3;
 
-         let campusInput = document.querySelector('input[name="campus"]');
-         if(!campusInput){
-             campusInput = document.createElement('input');
-             campusInput.type = 'hidden';
-             campusInput.name = 'campus';
-             filterForm.appendChild(campusInput);
-         }
-         campusInput.value = campusId;
-         filterForm.submit();
-     });
- });
+        let campusInput = document.querySelector('input[name="campus"]');
+        if(!campusInput){
+            campusInput = document.createElement('input');
+            campusInput.type = 'hidden';
+            campusInput.name = 'campus';
+            filterForm.appendChild(campusInput);
+        }
+        campusInput.value = campusId;
+        filterForm.submit();
+    });
+});
 
- // Reservation form redirect
- function openReservationForm(roomID, campus, building, roomName, date, time) {
+// Reservation form redirect
+function openReservationForm(roomID, campus, building, roomName, date, time) {
    const params = new URLSearchParams({
      roomID: roomID,
      campus: campus,
      building: building,
-	 room: roomName,
+     room: roomName,
      date: date,
      time: time
    });
    window.location.href = `Reservation Form/form.html?${params.toString()}`;
- }
+}
 
- // Update Database popup
- const updateBtn = document.getElementById('updateBtn');
- const updatePopup = document.getElementById('updatePopup');
- const uploadForm = document.getElementById('uploadForm');
- const updateMessage = document.getElementById('updateMessage');
+// Upload Excel File
+const updateBtn = document.getElementById('updateBtn');
+const updatePopup = document.getElementById('updatePopup');
+const uploadForm = document.getElementById('uploadForm');
+const updateMessage = document.getElementById('updateMessage');
 
- updateBtn.addEventListener('click', () => {
-     updatePopup.classList.add('active');
-     updatePopup.setAttribute('aria-hidden', 'false');
-     updateMessage.innerHTML = '';
- });
+updateBtn.addEventListener('click', () => {
+    updatePopup.classList.add('active');
+    updatePopup.setAttribute('aria-hidden', 'false');
+    updateMessage.innerHTML = '';
+});
 
- function closePopup() {
-     updatePopup.classList.remove('active');
-     updatePopup.setAttribute('aria-hidden', 'true');
- }
+function closePopup() {
+    updatePopup.classList.remove('active');
+    updatePopup.setAttribute('aria-hidden', 'true');
+}
 
- uploadForm.addEventListener('submit', function (e) {
-     e.preventDefault();
-     updateMessage.innerHTML = 'Uploading...';
+uploadForm.addEventListener('submit', function (e) {
+    e.preventDefault();
+    updateMessage.innerHTML = 'Uploading...';
 
-     const formData = new FormData(this);
-     const selectedTable = document.getElementById('tableSelect').value;
-     if (!selectedTable) { updateMessage.innerHTML = "<p style='color:red;'>Please select a table.</p>"; return; }
-     formData.append('table', selectedTable);
+    const formData = new FormData(this);
+    const selectedTable = document.getElementById('tableSelect').value;
+    if (!selectedTable) { 
+        updateMessage.innerHTML = "<p style='color:red;'>Please select a table.</p>"; 
+        return; 
+    }
+    formData.append('table', selectedTable);
 
-     fetch("update_rooms.php", { method: "POST", body: formData })
-     .then(res => res.text())
-     .then(data => { updateMessage.innerHTML = data; })
-     .catch(err => { updateMessage.innerHTML = "<p style='color:red;'>Upload failed.</p>"; });
- });
+    fetch("update_rooms.php", { method: "POST", body: formData })
+    .then(res => res.text())
+    .then(data => { updateMessage.innerHTML = data; })
+    .catch(err => { updateMessage.innerHTML = "<p style='color:red;'>Upload failed.</p>"; });
+});
 </script>
 </body>
 </html>
