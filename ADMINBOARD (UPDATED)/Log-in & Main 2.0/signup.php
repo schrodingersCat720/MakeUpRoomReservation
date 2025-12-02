@@ -1,5 +1,8 @@
 // Example structure for signup.php
 <?php
+// START SESSION HERE
+session_start();
+
 // 1. Database Connection 
 $host = 'localhost';
 $db   = 'admindb';
@@ -50,8 +53,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt = $pdo->prepare($sql);
     
     if ($stmt->execute([$email, $hashed_password])) {
-        // Success: Redirect back to the login form with a success message
-        header("Location: index.php?success=registered");
+        // Success: Set session variable and redirect to index.php
+        $_SESSION['signup_success'] = 'Account created successfully! Please log in.';
+        header("Location: index.php");
         exit();
     } else {
         // Handle error: database insertion failed

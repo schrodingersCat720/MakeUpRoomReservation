@@ -352,3 +352,40 @@ nav .menu-icon:hover {
     width: 100%;
   }
 }
+
+/* Style the actual input field (where the user types the username) */
+.email-input-group .loginInput.email-prefix-input {
+    border: none !important; /* Force border removal */
+    flex-grow: 1; /* Allows it to fill the left space */
+    background: none;
+    box-shadow: none !important; /* Force box-shadow removal */
+    height: 100%;
+    padding: 0 0 0 12px; /* Pad left only for typing */
+    box-sizing: border-box;
+    font-size: 16px;
+    /* Ensure the input does not create a new line */
+    display: inline-block;
+}
+
+/* Style for the fixed @gmail.com text */
+.email-suffix {
+    background: none;
+    color: #555;
+    height: 100%;
+    /* Padding to create separation from the input text */
+    padding: 0 12px 0 0;
+    /* Align text vertically and keep it on one line */
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    font-size: 16px; /* Match the input text size for better alignment */
+}
+
+/* Ensure error message positioning is correct below the combined field */
+.signupForm .email-input-group .error {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    margin-top: 5px;
+    width: 100%;
+}
