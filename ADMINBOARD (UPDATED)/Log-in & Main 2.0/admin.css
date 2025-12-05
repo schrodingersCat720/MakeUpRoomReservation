@@ -107,7 +107,7 @@ body {
     margin-bottom: 25px;
 }
 
-.loginInput {
+.loginInput ,.email-wrapper  {
     font-family: 'Garet-Book';
     background: #d9d9d9;
     width: 362px;
@@ -839,3 +839,41 @@ nav {
 .update-msg {
     margin-top: 10px;
 }
+
+/* ===== EMAIL INPUT GROUP ===== */
+.email-input-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  /* ===== INPUT WRAPPER ===== */
+  .email-wrapper {
+    position: relative;
+   
+  }
+  
+  /* ===== INPUT FIELD ===== */
+  .email-prefix-input {
+    width: 100%;
+    padding: 10px 100px 10px 2px; /* extra right padding for suffix */
+    font-size: 14px;
+    border-radius: 6px;
+    box-sizing: border-box;
+    font-family: 'Garet-Book', sans-serif;
+  }
+  
+  /* ===== SUFFIX TEXT ===== */
+  .email-suffix {
+    position: absolute;
+    right: 16px; /* closer to edge */
+    top: 50%;
+    transform: translateY(-50%);
+    color: #333;
+    font-size: 14px;
+    pointer-events: none;
+    opacity: 0.9;
+    font-family: 'Garet-Book', sans-serif;
+  }
+  
+
