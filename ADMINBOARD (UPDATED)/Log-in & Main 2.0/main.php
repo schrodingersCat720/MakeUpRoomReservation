@@ -19,10 +19,20 @@ if (isset($_SESSION['user_id'])) {
 }
 
 // Time-based greeting
-$hour = date('H');
-if ($hour < 12) $greeting = "Good morning";
-elseif ($hour < 18) $greeting = "Good afternoon";
-else $greeting = "Good evening";
+date_default_timezone_set('Asia/Manila');
+
+$hour = date('G');
+
+if ($hour < 12) {
+    $greeting = "Good morning";
+} elseif ($hour < 18) {
+    $greeting = "Good afternoon";
+} else {
+    $greeting = "Good evening";
+}
+
+echo $greeting;
+
 
 /* -----------------------------
    AJAX HANDLERS
@@ -148,8 +158,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['ajax'])) {
       </div>
     </div>
     <div class="greetings">
-        <div><h4><?= $greeting ?>, <?= htmlspecialchars($loggedInUser) ?></h4></div>
-        <div><a href="admin_profile.php"><img src="image/profIcon.png" alt="profileIcon" class="profIcon"></a></div>
+        <div><h4><?= $greeting ?>, Admin! </h4></div>
     </div>
     <div class="menu-icon" id="menuToggle">☰</div>
 </nav>
@@ -277,7 +286,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['ajax'])) {
 <div class="overlay" id="overlay"></div>
 <div class="side-menu" id="sideMenu">
   <div class="back-btn" id="backBtn">◀</div>
-  <h3>MENU</h3>
+  
+  <!-- Profile Section -->
+  <div class="sidebar-profile">
+      <a href="admin_profile.php">
+          <img src="image/profIcon.png" alt="profileIcon" class="profIcon">
+      </a>
+      <h3><?= htmlspecialchars($loggedInUser) ?></h3>
+  </div>
+  
+  <hr>
 
   <button class="Transactionbtn">Transaction Logs</button>
   <hr>
