@@ -31,7 +31,7 @@ if (isset($_SESSION['signup_success'])) {
           required
           
         />
-        <span class="email-suffix">@gmail.com</span>
+
         <div class="error" id="loginEmailError">Please enter your email.</div>
         <div class="error" id="loginEmailFormatError">Please enter a valid email address.</div>
       </div>
